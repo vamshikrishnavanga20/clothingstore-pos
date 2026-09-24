@@ -1,0 +1,1046 @@
+{
+  "snapshotType": "Full_Store_Data_Snapshot",
+  "backupWeek": "2026-W39",
+  "timestamp": "2026-09-21T10:45:00.577Z",
+  "data": {
+    "branches": [
+      {
+        "id": "branch-1",
+        "name": "Branch 1 - Downtown Flagship",
+        "code": "B1",
+        "location": "Road No. 36, Jubilee Hills, Hyderabad",
+        "phone": "+91 98765 43210"
+      },
+      {
+        "id": "branch-2",
+        "name": "Branch 2 - Uptown Galleria",
+        "code": "B2",
+        "location": "Inorbit Mall Ground Floor, Hitech City",
+        "phone": "+91 98765 43211"
+      },
+      {
+        "id": "branch-1136",
+        "name": "Branch 3 - Banjara Hills Boutique",
+        "code": "B3",
+        "city": "Hyderabad",
+        "location": "Road No. 12, Banjara Hills, Hyderabad",
+        "phone": "+91 98765 43212",
+        "managerName": "Vikram Seth",
+        "status": "Active"
+      }
+    ],
+    "categories": [
+      {
+        "id": "cat-1",
+        "name": "Checks",
+        "slug": "checks",
+        "image": "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=400&auto=format&fit=crop",
+        "description": "Timeless plaid and check patterns tailored for all occasions."
+      },
+      {
+        "id": "cat-2",
+        "name": "Streetwear",
+        "slug": "streetwear",
+        "image": "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=400&auto=format&fit=crop",
+        "description": "Modern urban aesthetics, oversized cuts, and utility silhouettes."
+      },
+      {
+        "id": "cat-3",
+        "name": "Sneakers",
+        "slug": "sneakers",
+        "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=400&auto=format&fit=crop",
+        "description": "Curated hype and daily lifestyle footwear collections."
+      },
+      {
+        "id": "cat-4",
+        "name": "Essentials",
+        "slug": "essentials",
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=400&auto=format&fit=crop",
+        "description": "Heavyweight organic cotton tees, sweatpants, and daily staples."
+      },
+      {
+        "id": "cat-5",
+        "name": "Formals",
+        "slug": "formals",
+        "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=400&auto=format&fit=crop",
+        "description": "Impeccable linen shirts, trousers, and blazers."
+      },
+      {
+        "id": "cat-6",
+        "name": "Ethnic",
+        "slug": "ethnic",
+        "image": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=400&auto=format&fit=crop",
+        "description": "Artisanal kurtas and occasion-wear crafted with premium silk blends."
+      }
+    ],
+    "products": [
+      {
+        "name": "denim",
+        "sku": "RI-8387",
+        "category": "Checks",
+        "description": "",
+        "costPrice": 600,
+        "sellingPrice": 1499,
+        "tag": "",
+        "sizes": [
+          "L",
+          "M",
+          "S"
+        ],
+        "sizePrices": {
+          "L": {
+            "sellingPrice": 1499,
+            "costPrice": 600
+          },
+          "M": {
+            "costPrice": 613,
+            "sellingPrice": 11
+          },
+          "S": {
+            "costPrice": 611,
+            "sellingPrice": 121
+          }
+        },
+        "hasVariablePricing": true,
+        "image": "/uploads/cloth-1789816820925-rj5z0o9.webp",
+        "inventory": {
+          "branch-1": {
+            "L": 0,
+            "M": 1,
+            "S": 1
+          },
+          "branch-2": {
+            "L": 1,
+            "M": 1,
+            "S": 1
+          },
+          "branch-1136": {
+            "L": 1,
+            "M": 1,
+            "S": 1
+          }
+        },
+        "id": "prod-1789816828398",
+        "createdAt": "2026-09-19T11:20:28.398Z",
+        "updatedAt": "2026-09-19T11:29:44.223Z"
+      },
+      {
+        "name": "ffewfefefewfwef",
+        "sku": "RI-1758",
+        "category": "Checks",
+        "description": "",
+        "costPrice": 600,
+        "sellingPrice": 1499,
+        "tag": "Bestseller",
+        "sizes": [
+          "L"
+        ],
+        "image": "/uploads/cloth-1789815050557-06lduda.webp",
+        "inventory": {
+          "branch-1": {
+            "L": 1
+          },
+          "branch-2": {
+            "L": 2
+          },
+          "branch-1136": {
+            "L": 1
+          }
+        },
+        "id": "prod-1789815051770",
+        "createdAt": "2026-09-19T10:50:51.770Z",
+        "updatedAt": "2026-09-19T11:59:51.785Z",
+        "hasSizeChart": false,
+        "sizeChartMeasurements": []
+      },
+      {
+        "name": "hrhrhrr",
+        "sku": "RI-0732",
+        "category": "Checks",
+        "description": "",
+        "costPrice": 600,
+        "sellingPrice": 1499,
+        "tag": "Bestseller",
+        "image": "/uploads/cloth-1789812825758-xnket10.webp",
+        "inventory": {
+          "branch-1": {
+            "S": 13,
+            "M": 10,
+            "L": 10,
+            "XL": 7,
+            "XXL": 4
+          },
+          "branch-2": {
+            "S": 10,
+            "M": 10,
+            "L": 10,
+            "XL": 7,
+            "XXL": 4
+          },
+          "branch-1136": {
+            "S": 10,
+            "M": 10,
+            "L": 10,
+            "XL": 7,
+            "XXL": 4
+          }
+        },
+        "id": "prod-1789812840744",
+        "createdAt": "2026-09-19T10:14:00.744Z",
+        "updatedAt": "2026-09-19T10:17:28.384Z"
+      },
+      {
+        "id": "prod-1",
+        "name": "Heritage Flannel Shirt",
+        "sku": "CHK-01-FLN",
+        "category": "Checks",
+        "description": "Double-brushed pure cotton heavy flannel shirt with horn buttons.",
+        "costPrice": 650,
+        "sellingPrice": 1499,
+        "tag": "Bestseller",
+        "image": "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 14,
+            "M": 25,
+            "L": 18,
+            "XL": 10,
+            "XXL": 5
+          },
+          "branch-2": {
+            "S": 8,
+            "M": 15,
+            "L": 12,
+            "XL": 6,
+            "XXL": 4
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-08-20T07:55:04.485Z",
+        "updatedAt": "2026-09-19T10:54:52.441Z"
+      },
+      {
+        "id": "prod-2",
+        "name": "Oversized Cargo Denim",
+        "sku": "STR-02-DNM",
+        "category": "Streetwear",
+        "description": "14oz Japanese twill washed cargo jeans with 6 deep utility pockets.",
+        "costPrice": 950,
+        "sellingPrice": 2199,
+        "tag": "New",
+        "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 10,
+            "M": 18,
+            "L": 15,
+            "XL": 8,
+            "XXL": 3
+          },
+          "branch-2": {
+            "S": 12,
+            "M": 14,
+            "L": 15,
+            "XL": 9,
+            "XXL": 2
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-08-25T07:55:04.485Z",
+        "updatedAt": "2026-09-19T09:45:15.499Z"
+      },
+      {
+        "id": "prod-3",
+        "name": "Retro High-Top Jordans",
+        "sku": "SNK-03-RET",
+        "category": "Sneakers",
+        "description": "Full-grain tumbled leather high-top sneaker with cushioned air unit.",
+        "costPrice": 5200,
+        "sellingPrice": 9500,
+        "tag": "Limited",
+        "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
+        "sizes": [
+          "7",
+          "8",
+          "9",
+          "10",
+          "11"
+        ],
+        "inventory": {
+          "branch-1": {
+            "7": 4,
+            "8": 6,
+            "9": 4,
+            "10": 15,
+            "11": 2
+          },
+          "branch-2": {
+            "7": 3,
+            "8": 7,
+            "9": 6,
+            "10": 4,
+            "11": 1
+          },
+          "branch-1136": {
+            "7": 5,
+            "8": 8,
+            "9": 8,
+            "10": 5,
+            "11": 2
+          }
+        },
+        "createdAt": "2026-08-30T07:55:04.485Z",
+        "updatedAt": "2026-09-19T11:36:08.910Z"
+      },
+      {
+        "id": "prod-4",
+        "name": "Heavyweight Boxy Tee",
+        "sku": "ESS-04-TEE",
+        "category": "Essentials",
+        "description": "280 GSM heavyweight combed cotton tee with ribbed neck and drop shoulder.",
+        "costPrice": 350,
+        "sellingPrice": 899,
+        "tag": "Bestseller",
+        "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 25,
+            "M": 35,
+            "L": 25,
+            "XL": 20,
+            "XXL": 12
+          },
+          "branch-2": {
+            "S": 20,
+            "M": 28,
+            "L": 25,
+            "XL": 15,
+            "XXL": 8
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-09-04T07:55:04.485Z",
+        "updatedAt": "2026-09-19T11:31:42.136Z"
+      },
+      {
+        "id": "prod-5",
+        "name": "Monochrome Shacket",
+        "sku": "CHK-05-SHK",
+        "category": "Checks",
+        "description": "Heavyweight wool-blend outerwear shirt with chest pockets.",
+        "costPrice": 780,
+        "sellingPrice": 1799,
+        "tag": "Trending",
+        "image": "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 8,
+            "M": 12,
+            "L": 14,
+            "XL": 6,
+            "XXL": 2
+          },
+          "branch-2": {
+            "S": 6,
+            "M": 10,
+            "L": 11,
+            "XL": 4,
+            "XXL": 1
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-09-09T07:55:04.485Z",
+        "updatedAt": "2026-09-19T07:55:04.485Z"
+      },
+      {
+        "id": "prod-6",
+        "name": "Utility Tech Vest",
+        "sku": "STR-06-VST",
+        "category": "Streetwear",
+        "description": "Water-resistant ripstop nylon tactical vest with dual zipper and MOLLE loops.",
+        "costPrice": 550,
+        "sellingPrice": 1299,
+        "tag": "",
+        "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 12,
+            "M": 16,
+            "L": 14,
+            "XL": 8,
+            "XXL": 3
+          },
+          "branch-2": {
+            "S": 9,
+            "M": 12,
+            "L": 10,
+            "XL": 5,
+            "XXL": 2
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-09-12T07:55:04.485Z",
+        "updatedAt": "2026-09-19T07:55:04.485Z"
+      },
+      {
+        "id": "prod-7",
+        "name": "French Linen Button-Down",
+        "sku": "FRM-07-LIN",
+        "category": "Formals",
+        "description": "100% Normandy certified linen regular fit formal shirt.",
+        "costPrice": 820,
+        "sellingPrice": 1899,
+        "tag": "New",
+        "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 15,
+            "M": 20,
+            "L": 18,
+            "XL": 12,
+            "XXL": 5
+          },
+          "branch-2": {
+            "S": 10,
+            "M": 18,
+            "L": 15,
+            "XL": 9,
+            "XXL": 4
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-09-14T07:55:04.485Z",
+        "updatedAt": "2026-09-19T07:55:04.485Z"
+      },
+      {
+        "id": "prod-8",
+        "name": "Royal Raw Silk Kurta",
+        "sku": "ETH-08-KRT",
+        "category": "Ethnic",
+        "description": "Handwoven tussar silk kurta with subtle embroidery at collar and cuffs.",
+        "costPrice": 1450,
+        "sellingPrice": 3499,
+        "tag": "Trending",
+        "image": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800&auto=format&fit=crop",
+        "inventory": {
+          "branch-1": {
+            "S": 6,
+            "M": 12,
+            "L": 9,
+            "XL": 8,
+            "XXL": 4
+          },
+          "branch-2": {
+            "S": 8,
+            "M": 14,
+            "L": 12,
+            "XL": 7,
+            "XXL": 3
+          },
+          "branch-1136": {
+            "S": 5,
+            "M": 8,
+            "L": 8,
+            "XL": 5,
+            "XXL": 2
+          }
+        },
+        "createdAt": "2026-09-16T07:55:04.485Z",
+        "updatedAt": "2026-09-19T09:45:15.499Z"
+      }
+    ],
+    "orders": [
+      {
+        "id": "ord-1789817502136",
+        "billingId": "BILL-B1-20260919-0012",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-4",
+            "productName": "Heavyweight Boxy Tee",
+            "category": "Essentials",
+            "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 2,
+            "unitCostPrice": 350,
+            "unitSellingPrice": 899,
+            "subtotal": 1798,
+            "grossProfit": 1098
+          }
+        ],
+        "subtotal": 1798,
+        "discount": 0,
+        "tax": 89.9,
+        "total": 1887.9,
+        "totalCost": 700,
+        "grossProfit": 1098,
+        "paymentMethod": "Card",
+        "customerName": "Walk-in Customer",
+        "customerPhone": "N/A",
+        "source": "web-pos",
+        "cashierName": "Downtown Cashier (Desk #1)",
+        "status": "Completed",
+        "createdAt": "2026-09-19T11:31:42.136Z"
+      },
+      {
+        "id": "ord-1789817384223",
+        "billingId": "BILL-B1-20260919-0011",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-1789816828398",
+            "productName": "denim",
+            "category": "Checks",
+            "image": "/uploads/cloth-1789816820925-rj5z0o9.webp",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 600,
+            "unitSellingPrice": 1499,
+            "subtotal": 1499,
+            "grossProfit": 899
+          },
+          {
+            "productId": "prod-4",
+            "productName": "Heavyweight Boxy Tee",
+            "category": "Essentials",
+            "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 2,
+            "unitCostPrice": 350,
+            "unitSellingPrice": 899,
+            "subtotal": 1798,
+            "grossProfit": 1098
+          }
+        ],
+        "subtotal": 3297,
+        "discount": 0,
+        "tax": 164.85,
+        "total": 3461.85,
+        "totalCost": 1300,
+        "grossProfit": 1997,
+        "paymentMethod": "UPI",
+        "customerName": "Rahul yaro",
+        "customerPhone": "564564",
+        "source": "web-pos",
+        "cashierName": "Downtown Cashier (Desk #1)",
+        "status": "Completed",
+        "createdAt": "2026-09-19T11:29:44.223Z"
+      },
+      {
+        "id": "ord-1789816643547",
+        "billingId": "BILL-B1-20260919-0010",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-1789816643351",
+            "productName": "Test Variable Jordan",
+            "category": "Sneakers",
+            "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop",
+            "size": "11",
+            "quantity": 1,
+            "unitCostPrice": 4500,
+            "unitSellingPrice": 9200,
+            "subtotal": 9200,
+            "grossProfit": 4700
+          }
+        ],
+        "subtotal": 9200,
+        "discount": 0,
+        "tax": 460,
+        "total": 9660,
+        "totalCost": 4500,
+        "grossProfit": 4700,
+        "paymentMethod": "UPI",
+        "customerName": "Walk-in Customer",
+        "customerPhone": "N/A",
+        "source": "web-pos",
+        "cashierName": "Cashier Desk",
+        "status": "Completed",
+        "createdAt": "2026-09-19T11:17:23.547Z"
+      },
+      {
+        "id": "ord-1789814414295",
+        "billingId": "BILL-B1-20260919-0009",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-1789814414194",
+            "productName": "Speed Runner Knit Trainer",
+            "category": "Sneakers",
+            "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop",
+            "size": "10",
+            "quantity": 2,
+            "unitCostPrice": 4200,
+            "unitSellingPrice": 7999,
+            "subtotal": 15998,
+            "grossProfit": 7598
+          }
+        ],
+        "subtotal": 15998,
+        "discount": 0,
+        "tax": 799.9,
+        "total": 16797.9,
+        "totalCost": 8400,
+        "grossProfit": 7598,
+        "paymentMethod": "UPI",
+        "customerName": "Walk-in Customer",
+        "customerPhone": "N/A",
+        "source": "web-pos",
+        "cashierName": "Cashier Desk",
+        "status": "Completed",
+        "createdAt": "2026-09-19T10:40:14.295Z"
+      },
+      {
+        "id": "ord-1789812035939",
+        "billingId": "BILL-B1-20260919-0008",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-1",
+            "productName": "Heritage Flannel Shirt",
+            "category": "Checks",
+            "image": "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=800&auto=format&fit=crop",
+            "size": "M",
+            "quantity": 1,
+            "unitCostPrice": 650,
+            "unitSellingPrice": 1499,
+            "subtotal": 1499,
+            "grossProfit": 849
+          }
+        ],
+        "subtotal": 1499,
+        "discount": 0,
+        "tax": 74.95,
+        "total": 1573.95,
+        "totalCost": 650,
+        "grossProfit": 849,
+        "paymentMethod": "UPI",
+        "customerName": "Test Live Customer",
+        "customerPhone": "9876543210",
+        "source": "web-pos",
+        "cashierName": "Cashier Desk",
+        "status": "Completed",
+        "createdAt": "2026-09-19T10:00:35.939Z"
+      },
+      {
+        "id": "ord-1789811137220",
+        "billingId": "BILL-B1-20260919-0007",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-3",
+            "productName": "Retro High-Top Jordans",
+            "category": "Sneakers",
+            "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 3,
+            "unitCostPrice": 5200,
+            "unitSellingPrice": 9500,
+            "subtotal": 28500,
+            "grossProfit": 12900
+          }
+        ],
+        "subtotal": 28500,
+        "discount": 0,
+        "tax": 1425,
+        "total": 29925,
+        "totalCost": 15600,
+        "grossProfit": 12900,
+        "paymentMethod": "Cash",
+        "customerName": "Walk-in Customer",
+        "customerPhone": "N/A",
+        "source": "web-pos",
+        "cashierName": "Downtown Cashier (Desk #1)",
+        "status": "Completed",
+        "createdAt": "2026-09-19T09:45:37.220Z"
+      },
+      {
+        "id": "ord-1789811115499",
+        "billingId": "BILL-B1-20260919-0006",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-3",
+            "productName": "Retro High-Top Jordans",
+            "category": "Sneakers",
+            "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 5200,
+            "unitSellingPrice": 9500,
+            "subtotal": 9500,
+            "grossProfit": 4300
+          },
+          {
+            "productId": "prod-2",
+            "productName": "Oversized Cargo Denim",
+            "category": "Streetwear",
+            "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 950,
+            "unitSellingPrice": 2199,
+            "subtotal": 2199,
+            "grossProfit": 1249
+          },
+          {
+            "productId": "prod-8",
+            "productName": "Royal Raw Silk Kurta",
+            "category": "Ethnic",
+            "image": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 1450,
+            "unitSellingPrice": 3499,
+            "subtotal": 3499,
+            "grossProfit": 2049
+          }
+        ],
+        "subtotal": 15198,
+        "discount": 0,
+        "tax": 759.9,
+        "total": 15957.9,
+        "totalCost": 7600,
+        "grossProfit": 7598,
+        "paymentMethod": "Cash",
+        "customerName": "Rahul",
+        "customerPhone": "4646464646",
+        "source": "web-pos",
+        "cashierName": "Downtown Cashier (Desk #1)",
+        "status": "Completed",
+        "createdAt": "2026-09-19T09:45:15.499Z"
+      },
+      {
+        "id": "ord-1789805369654",
+        "billingId": "BILL-B1-20260919-0005",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-4",
+            "productName": "Heavyweight Boxy Tee",
+            "category": "Essentials",
+            "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 350,
+            "unitSellingPrice": 899,
+            "subtotal": 899,
+            "grossProfit": 549
+          }
+        ],
+        "subtotal": 899,
+        "discount": 0,
+        "tax": 44.95,
+        "total": 943.95,
+        "totalCost": 350,
+        "grossProfit": 549,
+        "paymentMethod": "UPI",
+        "customerName": "Walk-in Customer",
+        "customerPhone": "N/A",
+        "source": "web-pos",
+        "cashierName": "Rahul (Desk #1)",
+        "status": "Completed",
+        "createdAt": "2026-09-19T08:09:29.654Z"
+      },
+      {
+        "id": "ord-1789804913176",
+        "billingId": "BILL-B1-20260919-0004",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-1",
+            "productName": "Heritage Flannel Shirt",
+            "category": "Checks",
+            "image": "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=800&auto=format&fit=crop",
+            "size": "M",
+            "quantity": 1,
+            "unitCostPrice": 650,
+            "unitSellingPrice": 1499,
+            "subtotal": 1499,
+            "grossProfit": 849
+          }
+        ],
+        "subtotal": 1499,
+        "discount": 0,
+        "tax": 74.95,
+        "total": 1573.95,
+        "totalCost": 650,
+        "grossProfit": 849,
+        "paymentMethod": "UPI",
+        "customerName": "Priya Sharma",
+        "customerPhone": "9876500112",
+        "source": "mobile-expo",
+        "cashierName": "Mobile Staff",
+        "status": "Completed",
+        "createdAt": "2026-09-19T08:01:53.176Z"
+      },
+      {
+        "id": "ord-101",
+        "billingId": "BILL-B1-2026-0001",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-1",
+            "productName": "Heritage Flannel Shirt",
+            "category": "Checks",
+            "image": "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=800&auto=format&fit=crop",
+            "size": "M",
+            "quantity": 2,
+            "unitCostPrice": 650,
+            "unitSellingPrice": 1499,
+            "subtotal": 2998,
+            "grossProfit": 1698
+          },
+          {
+            "productId": "prod-4",
+            "productName": "Heavyweight Boxy Tee",
+            "category": "Essentials",
+            "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 350,
+            "unitSellingPrice": 899,
+            "subtotal": 899,
+            "grossProfit": 549
+          }
+        ],
+        "subtotal": 3897,
+        "discount": 0,
+        "tax": 194.85,
+        "total": 4091.85,
+        "totalCost": 1650,
+        "grossProfit": 2247,
+        "paymentMethod": "UPI",
+        "customerName": "Kavita Reddy",
+        "customerPhone": "9848011223",
+        "source": "web-pos",
+        "cashierName": "Rahul (Downtown)",
+        "status": "Completed",
+        "createdAt": "2026-09-13T07:55:04.493Z"
+      },
+      {
+        "id": "ord-102",
+        "billingId": "BILL-B2-2026-0002",
+        "branchId": "branch-2",
+        "branchName": "Branch 2 - Uptown Galleria",
+        "items": [
+          {
+            "productId": "prod-3",
+            "productName": "Retro High-Top Jordans",
+            "category": "Sneakers",
+            "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 5200,
+            "unitSellingPrice": 9500,
+            "subtotal": 9500,
+            "grossProfit": 4300
+          }
+        ],
+        "subtotal": 9500,
+        "discount": 500,
+        "tax": 450,
+        "total": 9450,
+        "totalCost": 5200,
+        "grossProfit": 3800,
+        "paymentMethod": "Card",
+        "customerName": "Aditya Varma",
+        "customerPhone": "9877234123",
+        "source": "mobile-expo",
+        "cashierName": "Sneha (Uptown Expo)",
+        "status": "Completed",
+        "createdAt": "2026-09-14T07:55:04.493Z"
+      },
+      {
+        "id": "ord-103",
+        "billingId": "BILL-B1-2026-0003",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-2",
+            "productName": "Oversized Cargo Denim",
+            "category": "Streetwear",
+            "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop",
+            "size": "M",
+            "quantity": 1,
+            "unitCostPrice": 950,
+            "unitSellingPrice": 2199,
+            "subtotal": 2199,
+            "grossProfit": 1249
+          },
+          {
+            "productId": "prod-5",
+            "productName": "Monochrome Shacket",
+            "category": "Checks",
+            "image": "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=800&auto=format&fit=crop",
+            "size": "L",
+            "quantity": 1,
+            "unitCostPrice": 780,
+            "unitSellingPrice": 1799,
+            "subtotal": 1799,
+            "grossProfit": 1019
+          }
+        ],
+        "subtotal": 3998,
+        "discount": 200,
+        "tax": 189.9,
+        "total": 3987.9,
+        "totalCost": 1730,
+        "grossProfit": 2068,
+        "paymentMethod": "UPI",
+        "customerName": "Vikram Seth",
+        "customerPhone": "9123456780",
+        "source": "web-pos",
+        "cashierName": "Rahul (Downtown)",
+        "status": "Completed",
+        "createdAt": "2026-09-15T07:55:04.494Z"
+      },
+      {
+        "id": "ord-104",
+        "billingId": "BILL-B2-2026-0004",
+        "branchId": "branch-2",
+        "branchName": "Branch 2 - Uptown Galleria",
+        "items": [
+          {
+            "productId": "prod-8",
+            "productName": "Royal Raw Silk Kurta",
+            "category": "Ethnic",
+            "image": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800&auto=format&fit=crop",
+            "size": "XL",
+            "quantity": 1,
+            "unitCostPrice": 1450,
+            "unitSellingPrice": 3499,
+            "subtotal": 3499,
+            "grossProfit": 2049
+          }
+        ],
+        "subtotal": 3499,
+        "discount": 0,
+        "tax": 174.95,
+        "total": 3673.95,
+        "totalCost": 1450,
+        "grossProfit": 2049,
+        "paymentMethod": "Cash",
+        "customerName": "Sanjay Kumar",
+        "customerPhone": "9988776655",
+        "source": "mobile-expo",
+        "cashierName": "Sneha (Uptown Expo)",
+        "status": "Completed",
+        "createdAt": "2026-09-17T07:55:04.494Z"
+      },
+      {
+        "id": "ord-105",
+        "billingId": "BILL-B1-2026-0005",
+        "branchId": "branch-1",
+        "branchName": "Branch 1 - Downtown Flagship",
+        "items": [
+          {
+            "productId": "prod-7",
+            "productName": "French Linen Button-Down",
+            "category": "Formals",
+            "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=800&auto=format&fit=crop",
+            "size": "M",
+            "quantity": 2,
+            "unitCostPrice": 820,
+            "unitSellingPrice": 1899,
+            "subtotal": 3798,
+            "grossProfit": 2158
+          }
+        ],
+        "subtotal": 3798,
+        "discount": 0,
+        "tax": 189.9,
+        "total": 3987.9,
+        "totalCost": 1640,
+        "grossProfit": 2158,
+        "paymentMethod": "Card",
+        "customerName": "Rohan Sharma",
+        "customerPhone": "9765432109",
+        "source": "web-pos",
+        "cashierName": "Rahul (Downtown)",
+        "status": "Completed",
+        "createdAt": "2026-09-18T07:55:04.494Z"
+      },
+      {
+        "id": "ord-106",
+        "billingId": "BILL-B2-2026-0006",
+        "branchId": "branch-2",
+        "branchName": "Branch 2 - Uptown Galleria",
+        "items": [
+          {
+            "productId": "prod-4",
+            "productName": "Heavyweight Boxy Tee",
+            "category": "Essentials",
+            "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+            "size": "M",
+            "quantity": 3,
+            "unitCostPrice": 350,
+            "unitSellingPrice": 899,
+            "subtotal": 2697,
+            "grossProfit": 1647
+          }
+        ],
+        "subtotal": 2697,
+        "discount": 100,
+        "tax": 129.85,
+        "total": 2726.85,
+        "totalCost": 1050,
+        "grossProfit": 1547,
+        "paymentMethod": "UPI",
+        "customerName": "Ananya Rao",
+        "customerPhone": "9845123987",
+        "source": "mobile-expo",
+        "cashierName": "Pooja (Uptown Expo)",
+        "status": "Completed",
+        "createdAt": "2026-09-19T07:55:04.494Z"
+      }
+    ]
+  }
+}

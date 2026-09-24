@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# credentials & scratch files
+pass.txt
+passwords/
+temp_*.txt
+*.zip
+
+# mobile expo artifacts
+expo/node_modules/
+expo/.expo/
+expo/web-build/
+expo/dist/
+mobile-billing-app/
+

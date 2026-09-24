@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Roman Island POS",
+    "slug": "roman-island-pos",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0F19",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "com.romanisland.pos",
+      "versionCode": 1,
+      "permissions": [
+        "WAKE_LOCK",
+        "VIBRATE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#0B0F19"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.romanisland.pos",
+      "supportsTablet": true
+    }
+  }
+}

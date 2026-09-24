@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-gold-base: #E5B869;
+  --color-gold-light: #F6D68D;
+  --color-gold-dark: #C59846;
+  --color-obsidian: #080A11;
+  --color-obsidian-card: #0F131E;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark body {
+  background-color: #080A11;
+  color: #F8FAFC;
+}
+
+html:not(.dark) body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-display {
+  font-family: 'Cinzel', serif;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Custom Luxury Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #232A3B;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #E5B869;
+  }
+
+  /* Luxury Glassmorphism - Dark Mode */
+  .glass-card {
+    background: rgba(15, 19, 30, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Luxury Glassmorphism - Light Mode */
+  html:not(.dark) .glass-card,
+  .light .glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass-card-hover:hover {
+    border-color: rgba(229, 184, 105, 0.45);
+    box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(229, 184, 105, 0.2);
+    transform: translateY(-2px);
+  }
+
+  html:not(.dark) .glass-card-hover:hover,
+  .light .glass-card-hover:hover {
+    border-color: rgba(229, 184, 105, 0.7);
+    box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.08), 0 0 20px -5px rgba(229, 184, 105, 0.3);
+  }
+
+  /* Tactile Brushed Gold Button */
+  .gold-btn {
+    background: linear-gradient(135deg, #F3DE9C 0%, #E5B869 50%, #C7973F 100%);
+    color: #000000;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 0 4px 20px -2px rgba(229, 184, 105, 0.35);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .gold-btn:hover {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5CE7C 50%, #D4A346 100%);
+    box-shadow: 0 6px 30px rgba(229, 184, 105, 0.55);
+    transform: scale(1.02);
+  }
+  .gold-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Secondary Glass Button - Dark */
+  .glass-btn {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #E2E8F0;
+    transition: all 0.25s ease;
+  }
+  .glass-btn:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+  }
+  .glass-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Secondary Glass Button - Light */
+  html:not(.dark) .glass-btn,
+  .light .glass-btn {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #334155;
+  }
+  html:not(.dark) .glass-btn:hover,
+  .light .glass-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: #0F172A;
+  }
+
+  /* Ambient Gold Glow */
+  .gold-glow {
+    box-shadow: 0 0 35px -5px rgba(229, 184, 105, 0.25);
+  }
+
+  /* Metallic Text Gradient */
+  .gold-text-gradient {
+    background: linear-gradient(135deg, #FFF0CA 0%, #E5B869 50%, #BA892D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  html:not(.dark) .gold-text-gradient,
+  .light .gold-text-gradient {
+    background: linear-gradient(135deg, #996515 0%, #B8860B 50%, #7B4B00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Mesh Lighting Aura - Dark */
+  .ambient-mesh {
+    background-image: 
+      radial-gradient(at 10% 0%, rgba(229, 184, 105, 0.1) 0px, transparent 50%),
+      radial-gradient(at 90% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+      radial-gradient(at 50% 80%, rgba(229, 184, 105, 0.05) 0px, transparent 50%);
+  }
+
+  /* Mesh Lighting Aura - Light */
+  html:not(.dark) .ambient-mesh,
+  .light .ambient-mesh {
+    background-image: 
+      radial-gradient(at 10% 0%, rgba(229, 184, 105, 0.12) 0px, transparent 50%),
+      radial-gradient(at 90% 10%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
+      radial-gradient(at 50% 80%, rgba(229, 184, 105, 0.06) 0px, transparent 50%);
+  }
+}

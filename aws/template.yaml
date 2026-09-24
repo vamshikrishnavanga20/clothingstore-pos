@@ -1,0 +1,338 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Roman Island Apparel - Cloud-Native Enterprise Retail Architecture
+  Route 53, CloudFront CDN, AWS Lambda Compute, DynamoDB Billing & Products,
+  S3 Media Assets, and EventBridge-triggered Weekly Disaster Recovery Backups.
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: romanisland.com
+    Description: Root domain name managed in Amazon Route 53
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [production, staging, development]
+  AcmCertificateArn:
+    Type: String
+    Default: ''
+    Description: ACM SSL/TLS Certificate ARN in us-east-1 for CloudFront (optional for initial deployment)
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: nodejs20.x
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        NODE_ENV: production
+        AWS_REGION: !Ref AWS::Region
+        ROUTE53_DOMAIN_NAME: !Ref DomainName
+        DYNAMODB_BILLING_ORDERS_TABLE: !Ref BillingOrdersTable
+        DYNAMODB_PRODUCTS_TABLE: !Ref ProductsTable
+        DYNAMODB_BRANCHES_TABLE: !Ref BranchesTable
+        DYNAMODB_CATEGORIES_TABLE: !Ref CategoriesTable
+        AWS_S3_MEDIA_BUCKET: !Ref MediaBucket
+        AWS_S3_BACKUP_BUCKET: !Ref BackupBucket
+
+Resources:
+  # ============================================================================
+  # 1. AMAZON ROUTE 53 & CLOUDFRONT CDN
+  # ============================================================================
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: !Ref DomainName
+      HostedZoneConfig:
+        Comment: !Sub 'Public DNS Hosted Zone for ${DomainName}'
+
+  CloudFrontOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: RomanIslandOAC
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: 'Global CDN for Roman Island Apparel Web POS & Media'
+        HttpVersion: http2and3
+        PriceClass: PriceClass_All
+        Origins:
+          # Origin 1: S3 Media Bucket (Clothes Images)
+          - Id: S3MediaOrigin
+            DomainName: !GetAtt MediaBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt CloudFrontOriginAccessControl.Id
+            S3OriginConfig: {}
+          # Origin 2: Next.js Serverless Lambda Function URL
+          - Id: NextJsLambdaOrigin
+            DomainName: !Select [2, !Split ['/', !GetAtt NextJsFunctionUrl.FunctionUrl]]
+            CustomOriginConfig:
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        DefaultCacheBehavior:
+          TargetOriginId: NextJsLambdaOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT]
+          CachedMethods: [GET, HEAD, OPTIONS]
+          Compress: true
+          ForwardedValues:
+            QueryString: true
+            Cookies:
+              Forward: all
+            Headers:
+              - Authorization
+              - Host
+              - Accept
+        CacheBehaviors:
+          # Optimized edge caching for high-res clothes photos
+          - PathPattern: '/products/*'
+            TargetOriginId: S3MediaOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD]
+            CachedMethods: [GET, HEAD]
+            Compress: true
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
+            MinTTL: 86400
+            DefaultTTL: 604800
+            MaxTTL: 31536000
+
+  # Route 53 DNS Record pointing to CloudFront
+  DnsRecordApex:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZone
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        HostedZoneId: Z2FDTNDATAQYW2 # CloudFront standard hosted zone ID
+        DNSName: !GetAtt CloudFrontDistribution.DomainName
+
+  # ============================================================================
+  # 2. AMAZON DYNAMODB NO-SQL STORAGE
+  # ============================================================================
+  BillingOrdersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'RomanIsland-BillingOrders-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: branchId
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+        - AttributeName: billingId
+          AttributeType: S
+        - AttributeName: customerPhone
+          AttributeType: S
+      KeySchema:
+        - AttributeName: branchId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        # GSI 1: Fast Lookup by Unique Bill ID (e.g. BILL-B1-2026-0042)
+        - IndexName: BillingIdIndex
+          KeySchema:
+            - AttributeName: billingId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        # GSI 2: Customer Loyalty & Purchase History Lookup
+        - IndexName: CustomerPhoneIndex
+          KeySchema:
+            - AttributeName: customerPhone
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  ProductsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'RomanIsland-Products-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: category
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: CategoryIndex
+          KeySchema:
+            - AttributeName: category
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  BranchesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'RomanIsland-Branches-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  CategoriesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'RomanIsland-Categories-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  # ============================================================================
+  # 3. AMAZON S3 STORAGE (MEDIA & WEEKLY BACKUPS)
+  # ============================================================================
+  # Bucket 1: Product & Clothes Photos
+  MediaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'roman-island-media-${AWS::AccountId}-${Environment}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST, HEAD]
+            AllowedOrigins: ['*']
+            MaxAge: 3600
+
+  MediaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MediaBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: 's3:GetObject'
+            Resource: !Sub '${MediaBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                'AWS:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}'
+
+  # Bucket 2: Weekly Customer Bills & Retail Analytics Backups
+  BackupBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'roman-island-db-backups-${AWS::AccountId}-${Environment}'
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionToGlacierAndExpire
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: GLACIER
+              - TransitionInDays: 90
+                StorageClass: DEEP_ARCHIVE
+            ExpirationInDays: 730 # Retain 2 years for legal/tax compliance
+
+  # ============================================================================
+  # 4. AWS LAMBDA COMPUTE & SCHEDULED WEEKLY BACKUP CRON
+  # ============================================================================
+  NextJsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: ../
+      Description: 'Roman Island Apparel Next.js Serverless Engine'
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BillingOrdersTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BranchesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CategoriesTable
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+        - S3CrudPolicy:
+            BucketName: !Ref BackupBucket
+      FunctionUrlConfig:
+        AuthType: NONE
+
+  # Dedicated Weekly Backup Lambda (Bills + Financial Analytics to S3)
+  WeeklyBackupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/lib/backup.executeWeeklyS3Backup
+      CodeUri: ../
+      Timeout: 120
+      MemorySize: 512
+      Description: 'Runs at end of every week to snapshot customer bills & analytics to S3'
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref BillingOrdersTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref ProductsTable
+        - S3WritePolicy:
+            BucketName: !Ref BackupBucket
+      Events:
+        EndOfWeekSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'cron(0 0 ? * SUN *)' # Every Sunday at 00:00 UTC
+            Name: RomanIslandWeeklyBackupRule
+            Description: 'Triggers Sunday backup of customer bills and retail analytics report'
+
+Outputs:
+  CloudFrontUrl:
+    Description: 'CloudFront Distribution Domain Name'
+    Value: !GetAtt CloudFrontDistribution.DomainName
+  Route53ApexDomain:
+    Description: 'Custom Route 53 Apex Domain'
+    Value: !Ref DomainName
+  BillingOrdersTableName:
+    Description: 'DynamoDB Billing Orders Table Name'
+    Value: !Ref BillingOrdersTable
+  ProductsTableName:
+    Description: 'DynamoDB Products Table Name'
+    Value: !Ref ProductsTable
+  MediaBucketName:
+    Description: 'S3 Clothes Images Bucket'
+    Value: !Ref MediaBucket
+  BackupBucketName:
+    Description: 'S3 Weekly Disaster Recovery & Customer Bills Bucket'
+    Value: !Ref BackupBucket

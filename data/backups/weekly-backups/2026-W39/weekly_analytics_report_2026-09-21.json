@@ -1,0 +1,166 @@
+{
+  "reportTitle": "Roman Island Apparel - Weekly Executive Analytics Report",
+  "period": "2026-W39",
+  "generatedAt": "2026-09-21T10:45:00.577Z",
+  "metrics": {
+    "totalBillsProcessed": 15,
+    "totalRevenue": 109700.84999999999,
+    "totalCost": 52470,
+    "grossProfit": 52007,
+    "grossProfitMarginPct": 47.41,
+    "averageOrderValue": 7313.39,
+    "paymentMethodDistribution": {
+      "Cash": 3,
+      "UPI": 9,
+      "Card": 3
+    },
+    "branchBreakdown": {
+      "branch-1": {
+        "revenue": 93850.04999999999,
+        "ordersCount": 12
+      },
+      "branch-2": {
+        "revenue": 15850.8,
+        "ordersCount": 3
+      }
+    }
+  },
+  "topPerformers": [
+    {
+      "productId": "prod-3",
+      "name": "Retro High-Top Jordans",
+      "category": "Sneakers",
+      "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop",
+      "unitsSold": 4,
+      "totalRevenue": 38000,
+      "totalProfit": 17200,
+      "sharePct": 39.5
+    },
+    {
+      "productId": "prod-4",
+      "name": "Heavyweight Boxy Tee",
+      "category": "Essentials",
+      "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=800&auto=format&fit=crop",
+      "unitsSold": 8,
+      "totalRevenue": 7192,
+      "totalProfit": 4392,
+      "sharePct": 7.5
+    },
+    {
+      "productId": "prod-8",
+      "name": "Royal Raw Silk Kurta",
+      "category": "Ethnic",
+      "image": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800&auto=format&fit=crop",
+      "unitsSold": 2,
+      "totalRevenue": 6998,
+      "totalProfit": 4098,
+      "sharePct": 7.3
+    },
+    {
+      "productId": "prod-2",
+      "name": "Oversized Cargo Denim",
+      "category": "Streetwear",
+      "image": "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop",
+      "unitsSold": 2,
+      "totalRevenue": 4398,
+      "totalProfit": 2498,
+      "sharePct": 4.6
+    },
+    {
+      "productId": "prod-7",
+      "name": "French Linen Button-Down",
+      "category": "Formals",
+      "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=800&auto=format&fit=crop",
+      "unitsSold": 2,
+      "totalRevenue": 3798,
+      "totalProfit": 2158,
+      "sharePct": 3.9
+    }
+  ],
+  "dailyTrend": [
+    {
+      "date": "Tue (15/9)",
+      "revenue": 3987.9,
+      "cost": 1730,
+      "grossProfit": 2068,
+      "ordersCount": 1,
+      "branchBreakdown": {
+        "branch-1": 3987.9,
+        "branch-2": 0,
+        "branch-1136": 0
+      }
+    },
+    {
+      "date": "Wed (16/9)",
+      "revenue": 0,
+      "cost": 0,
+      "grossProfit": 0,
+      "ordersCount": 0,
+      "branchBreakdown": {
+        "branch-1": 0,
+        "branch-2": 0,
+        "branch-1136": 0
+      }
+    },
+    {
+      "date": "Thu (17/9)",
+      "revenue": 3673.95,
+      "cost": 1450,
+      "grossProfit": 2049,
+      "ordersCount": 1,
+      "branchBreakdown": {
+        "branch-1": 0,
+        "branch-2": 3673.95,
+        "branch-1136": 0
+      }
+    },
+    {
+      "date": "Fri (18/9)",
+      "revenue": 3987.9,
+      "cost": 1640,
+      "grossProfit": 2158,
+      "ordersCount": 1,
+      "branchBreakdown": {
+        "branch-1": 3987.9,
+        "branch-2": 0,
+        "branch-1136": 0
+      }
+    },
+    {
+      "date": "Sat (19/9)",
+      "revenue": 84509.25,
+      "cost": 40800,
+      "grossProfit": 39685,
+      "ordersCount": 10,
+      "branchBreakdown": {
+        "branch-1": 81782.4,
+        "branch-2": 2726.85,
+        "branch-1136": 0
+      }
+    },
+    {
+      "date": "Sun (20/9)",
+      "revenue": 0,
+      "cost": 0,
+      "grossProfit": 0,
+      "ordersCount": 0,
+      "branchBreakdown": {
+        "branch-1": 0,
+        "branch-2": 0,
+        "branch-1136": 0
+      }
+    },
+    {
+      "date": "Mon (21/9)",
+      "revenue": 0,
+      "cost": 0,
+      "grossProfit": 0,
+      "ordersCount": 0,
+      "branchBreakdown": {
+        "branch-1": 0,
+        "branch-2": 0,
+        "branch-1136": 0
+      }
+    }
+  ]
+}
