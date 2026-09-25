@@ -889,9 +889,18 @@ export function createOrder(data: {
 
   // Generate Unique Billing ID: BILL-B1-YYYYMMDD-XXXX
   const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const branchCode = data.branchId === 'branch-1' ? 'B1' : 'B2';
-  const countToday = db.orders.filter((o) => o.branchId === data.branchId).length + 1;
-  const billingId = `BILL-${branchCode}-${todayStr}-${String(countToday).padStart(4, '0')}`;
+  const branchCode = branch.code || (data.branchId === 'branch-1' ? 'B1' : data.branchId === 'branch-2' ? 'B2' : 'B3');
+  const todayPrefix = `BILL-${branchCode}-${todayStr}-`;
+  const existingTodayNums = db.orders
+    .filter((o) => o.billingId && o.billingId.startsWith(todayPrefix))
+    .map((o) => {
+      const parts = o.billingId.split('-');
+      const seqStr = parts[parts.length - 1];
+      return parseInt(seqStr, 10);
+    })
+    .filter((n) => !isNaN(n));
+  const nextSeq = existingTodayNums.length > 0 ? Math.max(...existingTodayNums) + 1 : db.orders.filter((o) => o.branchId === data.branchId).length + 1;
+  const billingId = `${todayPrefix}${String(nextSeq).padStart(4, '0')}`;
 
   // Customer Loyalty Accrual & Tier Evaluation
   let pointsEarned = 0;
@@ -1296,10 +1305,12 @@ export function getAnalytics(
   branchId?: BranchId,
   range: AnalyticsReportRange = '7d',
   startDateStr?: string,
-  endDateStr?: string
+  endDateStr?: string,
+  customOrders?: Order[]
 ): AnalyticsSummary {
   const db = getDatabase();
-  let orders = db.orders.filter((o) => o.status === 'Completed');
+  const sourceOrders = customOrders && Array.isArray(customOrders) && customOrders.length > 0 ? customOrders : db.orders;
+  let orders = sourceOrders.filter((o) => o.status === 'Completed');
 
   if (branchId && branchId !== 'all') {
     orders = orders.filter((o) => o.branchId === branchId);

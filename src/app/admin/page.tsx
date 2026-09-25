@@ -336,11 +336,11 @@ export default function EnterpriseAdminOS() {
       const bQueryStr = branchQuery ? `?${branchQuery}` : '';
 
       const [resBranches, resAnalytics, resProducts, resCats, resOrders] = await Promise.all([
-        fetch('/api/branches').then((r) => r.json()),
-        fetch(`/api/analytics${aQueryStr}`).then((r) => r.json()),
-        fetch('/api/products').then((r) => r.json()),
-        fetch('/api/categories').then((r) => r.json()),
-        fetch(`/api/orders${bQueryStr}`).then((r) => r.json()),
+        fetch('/api/branches', { cache: 'no-store' }).then((r) => r.json()),
+        fetch(`/api/analytics${aQueryStr}`, { cache: 'no-store' }).then((r) => r.json()),
+        fetch('/api/products', { cache: 'no-store' }).then((r) => r.json()),
+        fetch('/api/categories', { cache: 'no-store' }).then((r) => r.json()),
+        fetch(`/api/orders${bQueryStr}`, { cache: 'no-store' }).then((r) => r.json()),
       ]);
 
       if (Array.isArray(resBranches)) setBranches(resBranches);
@@ -413,7 +413,7 @@ export default function EnterpriseAdminOS() {
 
     const interval = setInterval(() => {
       fetchData(true);
-    }, 2500);
+    }, 12000);
 
     return () => {
       if (bc) bc.close();

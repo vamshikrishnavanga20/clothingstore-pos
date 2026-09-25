@@ -4,36 +4,75 @@ import {
   saveBillingOrderToDynamo,
   getBillingOrderByIdFromDynamo,
   getBillingOrdersByCustomerPhoneFromDynamo,
+  getBillingOrdersByBranchFromDynamo,
+  scanAllBillingOrdersFromDynamo,
   updateProductStockInDynamo,
   isDynamoConfigured,
 } from '../../../lib/dynamodb';
-import { BranchId } from '../../../lib/types';
+import { BranchId, Order } from '../../../lib/types';
 import { sendDigitalInvoiceNotification } from '../../../lib/notifications';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const branchId = (searchParams.get('branchId') as BranchId) || undefined;
   const search = searchParams.get('search')?.trim();
 
-  // If searching by unique billingId in DynamoDB
-  if (isDynamoConfigured && search && search.startsWith('BILL-')) {
-    const dynamoOrder = await getBillingOrderByIdFromDynamo(search);
-    if (dynamoOrder) {
-      return NextResponse.json([dynamoOrder]);
+  let orders: Order[] | null = null;
+
+  if (isDynamoConfigured) {
+    // If searching by unique billingId in DynamoDB
+    if (search && search.startsWith('BILL-')) {
+      const dynamoOrder = await getBillingOrderByIdFromDynamo(search);
+      if (dynamoOrder) {
+        return NextResponse.json([dynamoOrder], { headers: NO_CACHE_HEADERS });
+      }
+    }
+
+    // If searching by customer phone in DynamoDB
+    if (search && /^\d{10}$/.test(search)) {
+      const phoneOrders = await getBillingOrdersByCustomerPhoneFromDynamo(search);
+      if (phoneOrders && phoneOrders.length > 0) {
+        return NextResponse.json(phoneOrders, { headers: NO_CACHE_HEADERS });
+      }
+    }
+
+    // Branch-specific or all branches from DynamoDB
+    try {
+      if (branchId && branchId !== 'all') {
+        orders = await getBillingOrdersByBranchFromDynamo(branchId);
+      } else {
+        orders = await scanAllBillingOrdersFromDynamo();
+      }
+    } catch (e) {
+      console.warn('Error reading orders from DynamoDB:', e);
     }
   }
 
-  // If searching by customer phone in DynamoDB
-  if (isDynamoConfigured && search && /^\d{10}$/.test(search)) {
-    const phoneOrders = await getBillingOrdersByCustomerPhoneFromDynamo(search);
-    if (phoneOrders && phoneOrders.length > 0) {
-      return NextResponse.json(phoneOrders);
-    }
+  // Fallback to local store if DynamoDB returned null or is empty
+  if (!orders || orders.length === 0) {
+    orders = getOrders(branchId);
+  } else {
+    // Merge any local orders that might not be in DynamoDB yet
+    const local = getOrders(branchId);
+    const existingIds = new Set(orders.map((o) => o.id || o.billingId));
+    local.forEach((lo) => {
+      if (!existingIds.has(lo.id) && !existingIds.has(lo.billingId)) {
+        orders!.push(lo);
+      }
+    });
   }
 
-  let orders = getOrders(branchId);
+  // Sort newest first
+  orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (search && search !== '') {
     const q = search.toLowerCase();
@@ -45,7 +84,7 @@ export async function GET(request: Request) {
     );
   }
 
-  return NextResponse.json(orders);
+  return NextResponse.json(orders, { headers: NO_CACHE_HEADERS });
 }
 
 export async function POST(request: Request) {

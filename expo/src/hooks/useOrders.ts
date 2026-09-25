@@ -83,7 +83,7 @@ export function useOrders(activeBranchId: string) {
     staleTime: 1000 * 60 * 10,
   });
 
-  // 2. Apparel Products Query (Real-time 3s continuous background sync)
+  // 2. Apparel Products Query (5m stale time, catalog doesn't shift continuously)
   const {
     data: products = FALLBACK_PRODUCTS,
     isLoading: isLoadingProducts,
@@ -91,7 +91,7 @@ export function useOrders(activeBranchId: string) {
     refetch: refetchProducts,
   } = useQuery({
     queryKey: ['products'],
-    queryFn: async () => {
+    queryFn: async (): Promise<any[]> => {
       try {
         const res = await getProducts();
         if (Array.isArray(res) && res.length > 0) {
@@ -103,16 +103,16 @@ export function useOrders(activeBranchId: string) {
       }
       return FALLBACK_PRODUCTS;
     },
-    staleTime: 1000 * 15,
-    refetchInterval: 30000,
+    staleTime: 1000 * 60 * 5,
+    refetchInterval: false,
     refetchIntervalInBackground: false,
-    refetchOnMount: 'always',
+    refetchOnMount: false,
   });
 
   // 3. Branches Query
   const { data: branches = FALLBACK_BRANCHES } = useQuery({
     queryKey: ['branches'],
-    queryFn: async () => {
+    queryFn: async (): Promise<any[]> => {
       try {
         const res = await getBranches();
         if (Array.isArray(res) && res.length > 0) {
@@ -126,7 +126,7 @@ export function useOrders(activeBranchId: string) {
     staleTime: 1000 * 60 * 30,
   });
 
-  // 4. Orders / Invoices Query (Real-time 3s continuous background sync)
+  // 4. Orders / Invoices Query (20s interval, instant caching)
   const {
     data: serverOrders = [],
     isLoading: isLoadingOrders,
@@ -134,11 +134,12 @@ export function useOrders(activeBranchId: string) {
     refetch: refetchOrders,
   } = useQuery({
     queryKey: ['orders', activeBranchId],
-    queryFn: async () => {
+    queryFn: async (): Promise<RetailOrder[]> => {
       try {
         const res = await getOrderHistory(activeBranchId);
         if (Array.isArray(res)) {
           setLastSyncTime(new Date());
+          safeStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(res)).catch(() => {});
           return res;
         }
       } catch (e) {
@@ -147,10 +148,10 @@ export function useOrders(activeBranchId: string) {
       const saved = await safeStorage.getItem(STORAGE_ORDERS_KEY);
       return saved ? JSON.parse(saved) : [];
     },
-    staleTime: 1000 * 15,
-    refetchInterval: 30000,
+    staleTime: 1000 * 10,
+    refetchInterval: 20000,
     refetchIntervalInBackground: false,
-    refetchOnMount: 'always',
+    refetchOnMount: false,
   });
 
   // Background AppState Foreground Listener
@@ -310,7 +311,8 @@ export function useOrders(activeBranchId: string) {
     tickets,
     isLoadingProducts,
     isLoadingOrders,
-    isSyncing: isFetchingProducts || isFetchingOrders,
+    isFetchingOrders,
+    isSyncing: isFetchingOrders,
     lastSyncTime,
     placeOrder: placeOrderMutation.mutateAsync,
     isPlacingOrder: placeOrderMutation.isPending,

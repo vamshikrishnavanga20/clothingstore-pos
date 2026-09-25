@@ -105,7 +105,7 @@ export default function HistoryScreen() {
 
     const completed = list.filter((o) => o.status === 'Completed');
     const refunded = list.filter((o) => o.status === 'Refunded' || o.status === 'Cancelled');
-    const netRevenue = completed.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+    const netRevenue = Number(completed.reduce((sum, o) => sum + (Number(o.total) || 0), 0).toFixed(2));
 
     return {
       totalBills: list.length,
@@ -181,6 +181,7 @@ export default function HistoryScreen() {
           <AnimatedNumber
             value={shiftMetrics.netRevenue}
             prefix="₹"
+            decimals={2}
             formatIndian
             textStyle={styles.shiftNumGold}
             duration={800}
@@ -280,7 +281,7 @@ export default function HistoryScreen() {
       ) : (
         <FlatList
           data={filteredOrders}
-          keyExtractor={(item) => item.id || item.billingId}
+          keyExtractor={(item, index) => item.id || `${item.billingId}-${item.createdAt || index}`}
           contentContainerStyle={styles.listContent}
           initialNumToRender={8}
           maxToRenderPerBatch={10}

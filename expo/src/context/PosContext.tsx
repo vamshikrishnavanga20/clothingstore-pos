@@ -111,6 +111,8 @@ export const PosProvider = ({ children }: { children: React.ReactNode }) => {
     onRefresh,
     forceSync,
     isLoadingProducts,
+    isLoadingOrders,
+    isFetchingOrders,
     isSyncing,
     lastSyncTime,
   } = useOrders(activeBranchId);
@@ -346,7 +348,7 @@ export const PosProvider = ({ children }: { children: React.ReactNode }) => {
         lastOrderSummary,
         setLastOrderSummary,
         isOffline,
-        refreshing: isLoadingProducts,
+        refreshing: isFetchingOrders,
         isSyncing,
         lastSyncTime,
         onRefresh,

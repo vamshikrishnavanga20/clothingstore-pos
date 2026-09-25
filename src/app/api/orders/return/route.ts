@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server';
 import { returnOrder } from '../../../../lib/db';
 import {
   saveBillingOrderToDynamo,
+  getBillingOrderByIdFromDynamo,
   updateProductStockInDynamo,
   isDynamoConfigured,
 } from '../../../../lib/dynamodb';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function POST(request: Request) {
   try {
@@ -21,11 +23,30 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = returnOrder(targetId, {
+    let result = returnOrder(targetId, {
       reason: reason || 'Customer Return',
       cashierName,
       returnedItems,
     });
+
+    if (!result.success || !result.order) {
+      if (isDynamoConfigured) {
+        const dynamoOrder = await getBillingOrderByIdFromDynamo(targetId);
+        if (dynamoOrder) {
+          if (dynamoOrder.status === 'Refunded') {
+            return NextResponse.json(
+              { error: 'Order is already marked as Refunded', order: dynamoOrder },
+              { status: 400 }
+            );
+          }
+          dynamoOrder.status = 'Refunded';
+          dynamoOrder.refundedAt = new Date().toISOString();
+          dynamoOrder.returnReason = reason || 'Customer Return';
+          dynamoOrder.refundAmount = dynamoOrder.total;
+          result = { success: true, order: dynamoOrder };
+        }
+      }
+    }
 
     if (!result.success || !result.order) {
       return NextResponse.json(
