@@ -278,6 +278,38 @@ export async function scanCategoriesFromDynamo(): Promise<Category[] | null> {
   }
 }
 
+export async function deleteCategoryFromDynamo(id: string): Promise<boolean> {
+  if (!isDynamoConfigured || !docClient) return false;
+
+  try {
+    const command = new DeleteCommand({
+      TableName: DYNAMO_TABLES.CATEGORIES,
+      Key: { id },
+    });
+    await docClient.send(command);
+    return true;
+  } catch (error) {
+    console.warn('DynamoDB deleteCategory error:', error);
+    return false;
+  }
+}
+
+export async function deleteBranchFromDynamo(id: string): Promise<boolean> {
+  if (!isDynamoConfigured || !docClient) return false;
+
+  try {
+    const command = new DeleteCommand({
+      TableName: DYNAMO_TABLES.BRANCHES,
+      Key: { id },
+    });
+    await docClient.send(command);
+    return true;
+  } catch (error) {
+    console.warn('DynamoDB deleteBranch error:', error);
+    return false;
+  }
+}
+
 // -----------------------------------------------------------------------------
 // 4. INVENTORY STOCK ADJUSTMENTS & CATALOG SEEDING
 // -----------------------------------------------------------------------------

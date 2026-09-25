@@ -27,7 +27,27 @@ interface StoreDatabase {
   customers?: CustomerProfile[];
 }
 
-const DB_PATH = path.join(process.cwd(), 'data', 'store_data.json');
+function resolveDatabasePath(): string {
+  // If running in Vercel or AWS Lambda, the root deployment directory is read-only.
+  // /tmp is the only writable directory in serverless runtime.
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const tmpPath = path.join('/tmp', 'store_data.json');
+    if (!fs.existsSync(tmpPath)) {
+      const defaultPath = path.join(process.cwd(), 'data', 'store_data.json');
+      try {
+        if (fs.existsSync(defaultPath)) {
+          fs.copyFileSync(defaultPath, tmpPath);
+        }
+      } catch (e) {
+        console.warn('Could not initialize /tmp/store_data.json from default bundle:', e);
+      }
+    }
+    return tmpPath;
+  }
+  return path.join(process.cwd(), 'data', 'store_data.json');
+}
+
+const DB_PATH = resolveDatabasePath();
 
 const INITIAL_BRANCHES: Branch[] = [
   {
@@ -546,12 +566,19 @@ export function getDatabase(): StoreDatabase {
 }
 
 export function saveDatabase(data: StoreDatabase): void {
+  cachedDb = data;
   try {
     ensureDirectoryExistence(DB_PATH);
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
-    cachedDb = data;
   } catch (error) {
-    console.error('Failed to write store_data.json', error);
+    console.error('Failed to write store_data.json to ' + DB_PATH, error);
+    try {
+      const fallbackTmp = path.join('/tmp', 'store_data.json');
+      ensureDirectoryExistence(fallbackTmp);
+      fs.writeFileSync(fallbackTmp, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e2) {
+      console.warn('Failed to write to /tmp fallback:', e2);
+    }
   }
 }
 

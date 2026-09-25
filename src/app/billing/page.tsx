@@ -116,9 +116,9 @@ export default function BillingPOSPortal() {
     setLoading(true);
     try {
       const [resProd, resCat, resBranches] = await Promise.all([
-        fetch('/api/products').then((r) => r.json()),
-        fetch('/api/categories').then((r) => r.json()),
-        fetch('/api/branches').then((r) => r.json()),
+        fetch(`/api/products?_t=${Date.now()}`, { cache: 'no-store' }).then((r) => r.json()),
+        fetch(`/api/categories?_t=${Date.now()}`, { cache: 'no-store' }).then((r) => r.json()),
+        fetch(`/api/branches?_t=${Date.now()}`, { cache: 'no-store' }).then((r) => r.json()),
       ]);
       if (Array.isArray(resProd)) setProducts(resProd);
       if (Array.isArray(resCat)) setCategories(resCat);
@@ -137,6 +137,39 @@ export default function BillingPOSPortal() {
 
   useEffect(() => {
     fetchCatalog();
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('roman_island_sync');
+      bc.onmessage = (event) => {
+        if (event.data?.type === 'PRODUCT_DELETED') {
+          const deletedId = event.data.productId;
+          setProducts((prev) => prev.filter((p) => p.id !== deletedId));
+          setCart((prev) => prev.filter((it) => it.product.id !== deletedId));
+        } else if (event.data?.type === 'CATALOG_UPDATED') {
+          fetchCatalog();
+        }
+      };
+    } catch (e) {}
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'ri_catalog_sync' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed.type === 'PRODUCT_DELETED') {
+            const deletedId = parsed.productId;
+            setProducts((prev) => prev.filter((p) => p.id !== deletedId));
+            setCart((prev) => prev.filter((it) => it.product.id !== deletedId));
+          }
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      if (bc) bc.close();
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   // Cashier Login Handler

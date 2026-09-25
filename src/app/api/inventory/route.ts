@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { updateInventoryStock, getProducts } from '../../../lib/db';
 import { BranchId } from '../../../lib/types';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   const products = getProducts();
   const inventoryList = products.map((p) => ({
@@ -12,7 +15,11 @@ export async function GET() {
     image: p.image,
     inventory: p.inventory,
   }));
-  return NextResponse.json(inventoryList);
+  return NextResponse.json(inventoryList, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+    },
+  });
 }
 
 export async function PATCH(request: Request) {

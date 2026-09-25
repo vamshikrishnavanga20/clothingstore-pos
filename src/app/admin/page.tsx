@@ -365,11 +365,21 @@ export default function EnterpriseAdminOS() {
     try {
       bc = new BroadcastChannel('roman_island_sync');
       bc.onmessage = (event) => {
-        if (event.data?.type === 'ORDER_PLACED') {
+        if (event.data?.type === 'ORDER_PLACED' || event.data?.type === 'ORDER_REFUNDED') {
           const newOrder = event.data.order;
           setLiveOrderToast(newOrder);
           setIsLivePulse(true);
           setTimeout(() => setIsLivePulse(false), 2500);
+          fetchData(true);
+        } else if (event.data?.type === 'PRODUCT_DELETED') {
+          const pId = event.data.productId;
+          setProducts((prev) => prev.filter((p) => p.id !== pId));
+          fetchData(true);
+        } else if (event.data?.type === 'CATEGORY_DELETED') {
+          const cId = event.data.categoryId;
+          setCategories((prev) => prev.filter((c) => c.id !== cId));
+          fetchData(true);
+        } else if (event.data?.type === 'CATALOG_UPDATED') {
           fetchData(true);
         }
       };
@@ -384,6 +394,17 @@ export default function EnterpriseAdminOS() {
           setLiveOrderToast(parsed);
           setIsLivePulse(true);
           setTimeout(() => setIsLivePulse(false), 2500);
+          fetchData(true);
+        } catch (err) {}
+      }
+      if (e.key === 'ri_catalog_sync' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed.type === 'PRODUCT_DELETED') {
+            setProducts((prev) => prev.filter((p) => p.id !== parsed.productId));
+          } else if (parsed.type === 'CATEGORY_DELETED') {
+            setCategories((prev) => prev.filter((c) => c.id !== parsed.categoryId));
+          }
           fetchData(true);
         } catch (err) {}
       }
@@ -527,14 +548,37 @@ export default function EnterpriseAdminOS() {
 
   const handleDeleteCategory = async (id: string) => {
     if (!confirm('Delete this category?')) return;
+    const previousCategories = categories;
+    setCategories((prev) => prev.filter((c) => c.id !== id));
     try {
-      const res = await fetch(`/api/categories?id=${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        showToast('Category deleted');
-        fetchData();
+      const res = await fetch(`/api/categories?id=${id}`, {
+        method: 'DELETE',
+        cache: 'no-store',
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast('Category deleted successfully');
+        if (typeof window !== 'undefined') {
+          try {
+            const bc = new BroadcastChannel('roman_island_sync');
+            bc.postMessage({ type: 'CATEGORY_DELETED', categoryId: id, timestamp: Date.now() });
+            bc.close();
+          } catch (e) {}
+          try {
+            localStorage.setItem(
+              'ri_catalog_sync',
+              JSON.stringify({ type: 'CATEGORY_DELETED', categoryId: id, timestamp: Date.now() })
+            );
+          } catch (e) {}
+        }
+        fetchData(true);
+      } else {
+        setCategories(previousCategories);
+        showToast(data.error || 'Failed to delete category', 'error');
       }
     } catch (e) {
-      showToast('Failed to delete', 'error');
+      setCategories(previousCategories);
+      showToast('Failed to delete category', 'error');
     }
   };
 
@@ -786,13 +830,42 @@ export default function EnterpriseAdminOS() {
 
   const handleDeleteProduct = async (id: string) => {
     if (!confirm('Are you sure you want to remove this garment?')) return;
+    const previousProducts = products;
+    // Optimistic immediate UI update - no refresh needed
+    setProducts((prev) => prev.filter((p) => p.id !== id));
     try {
-      const res = await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        showToast('Product removed');
-        fetchData();
+      const res = await fetch(`/api/products?id=${id}`, {
+        method: 'DELETE',
+        cache: 'no-store',
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast('Product removed successfully');
+        // Real-time broadcast across all tabs and open windows
+        if (typeof window !== 'undefined') {
+          try {
+            const bc = new BroadcastChannel('roman_island_sync');
+            bc.postMessage({
+              type: 'PRODUCT_DELETED',
+              productId: id,
+              timestamp: Date.now(),
+            });
+            bc.close();
+          } catch (e) {}
+          try {
+            localStorage.setItem(
+              'ri_catalog_sync',
+              JSON.stringify({ type: 'PRODUCT_DELETED', productId: id, timestamp: Date.now() })
+            );
+          } catch (e) {}
+        }
+        fetchData(true);
+      } else {
+        setProducts(previousProducts);
+        showToast(data.error || 'Failed to remove garment from database', 'error');
       }
     } catch (e) {
+      setProducts(previousProducts);
       showToast('Error deleting item', 'error');
     }
   };

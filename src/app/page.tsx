@@ -41,13 +41,35 @@ export default function StorefrontHomePage() {
   const [selectedProductForDetail, setSelectedProductForDetail] = useState<Product | null>(null);
   const [detailSelectedSize, setDetailSelectedSize] = useState<string>('');
 
+  // Real-time background sync for storefront
+  const refreshProducts = async () => {
+    try {
+      const res = await fetch(`/api/products?_t=${Date.now()}`, { cache: 'no-store' });
+      if (res.ok) {
+        const freshProds = await res.json();
+        if (Array.isArray(freshProds)) {
+          setProducts(freshProds);
+          // Auto-close detail modal if the currently open product was removed
+          setSelectedProductForDetail((current) => {
+            if (current && !freshProds.some((p) => p.id === current.id)) {
+              return null;
+            }
+            return current;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to refresh products silently', err);
+    }
+  };
+
   useEffect(() => {
     async function loadStorefront() {
       try {
         const [resCats, resProds, resBranches] = await Promise.all([
-          fetch('/api/categories').then((r) => r.json()),
-          fetch('/api/products').then((r) => r.json()),
-          fetch('/api/branches').then((r) => r.json()),
+          fetch('/api/categories?_t=' + Date.now(), { cache: 'no-store' }).then((r) => r.json()),
+          fetch('/api/products?_t=' + Date.now(), { cache: 'no-store' }).then((r) => r.json()),
+          fetch('/api/branches?_t=' + Date.now(), { cache: 'no-store' }).then((r) => r.json()),
         ]);
         if (Array.isArray(resCats)) setCategories(resCats);
         if (Array.isArray(resProds)) setProducts(resProds);
@@ -59,6 +81,69 @@ export default function StorefrontHomePage() {
       }
     }
     loadStorefront();
+
+    // 1. Cross-tab BroadcastChannel for 0ms instantaneous deletion & live sync
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('roman_island_sync');
+      bc.onmessage = (event) => {
+        if (event.data?.type === 'PRODUCT_DELETED') {
+          const deletedId = event.data.productId;
+          setProducts((prev) => prev.filter((p) => p.id !== deletedId));
+          setSelectedProductForDetail((curr) => (curr?.id === deletedId ? null : curr));
+          refreshProducts();
+        } else if (event.data?.type === 'CATEGORY_DELETED') {
+          const cId = event.data.categoryId;
+          setCategories((prev) => prev.filter((c) => c.id !== cId));
+        } else if (event.data?.type === 'CATALOG_UPDATED') {
+          refreshProducts();
+        }
+      };
+    } catch (e) {
+      console.warn('BroadcastChannel not supported', e);
+    }
+
+    // 2. Storage event listener (fallback cross-tab communication)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'ri_catalog_sync' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed.type === 'PRODUCT_DELETED') {
+            const deletedId = parsed.productId;
+            setProducts((prev) => prev.filter((p) => p.id !== deletedId));
+            setSelectedProductForDetail((curr) => (curr?.id === deletedId ? null : curr));
+          } else if (parsed.type === 'CATEGORY_DELETED') {
+            setCategories((prev) => prev.filter((c) => c.id !== parsed.categoryId));
+          }
+          refreshProducts();
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    // 3. Multi-device live sync (polls every 3.5s when active tab)
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshProducts();
+      }
+    }, 3500);
+
+    // 4. Instant sync on tab focus or visibility change
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshProducts();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+
+    return () => {
+      if (bc) bc.close();
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
+    };
   }, []);
 
   // Listen for ESC key to close the full UI detail panel
