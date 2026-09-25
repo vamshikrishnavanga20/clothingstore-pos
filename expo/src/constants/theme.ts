@@ -108,10 +108,20 @@ export const FontWeights = {
   black: '900' as const,
 };
 
+// ─── Touch & Ergonomics (Retail POS Standards) ──────────────────────────────
+export const TouchTargets = {
+  min: 48,
+  compact: 42,
+  comfortable: 52,
+  prominent: 58,
+  hitSlop: { top: 12, bottom: 12, left: 12, right: 12 },
+  hitSlopLg: { top: 16, bottom: 16, left: 16, right: 16 },
+} as const;
+
 // ─── Layout Constants ────────────────────────────────────────────────────────
 export const TABLET_BREAKPOINT = 768;
-export const TAB_BAR_HEIGHT_PHONE = 72;
-export const TAB_BAR_HEIGHT_TABLET = 82;
+export const TAB_BAR_HEIGHT_PHONE = 76;
+export const TAB_BAR_HEIGHT_TABLET = 84;
 
 // ─── Status Color Map ────────────────────────────────────────────────────────
 export const StatusColors = {

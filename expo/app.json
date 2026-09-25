@@ -5,12 +5,18 @@
     "version": "1.0.0",
     "orientation": "default",
     "userInterfaceStyle": "dark",
-    "backgroundColor": "#0B0F19",
+    "backgroundColor": "#07090E",
+    "primaryColor": "#D4AF37",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#07090E",
+      "resizeMode": "contain"
+    },
     "android": {
       "package": "com.romanisland.pos",
       "versionCode": 1,
@@ -18,15 +24,53 @@
         "WAKE_LOCK",
         "VIBRATE",
         "INTERNET",
-        "ACCESS_NETWORK_STATE"
+        "ACCESS_NETWORK_STATE",
+        "CAMERA"
       ],
       "adaptiveIcon": {
-        "backgroundColor": "#0B0F19"
-      }
+        "backgroundColor": "#07090E"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "allowBackup": false
     },
     "ios": {
       "bundleIdentifier": "com.romanisland.pos",
-      "supportsTablet": true
-    }
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Roman Island POS uses the camera for barcode scanning to quickly look up products."
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "extra": {
+      "storeName": "Roman Island",
+      "storeTagline": "Premium Clothing Store POS Terminal",
+      "defaultApiUrl": "https://clothingstore-pos.vercel.app",
+      "gstRate": 0.05,
+      "currency": "INR",
+      "currencySymbol": "₹",
+      "eas": {
+        "projectId": "5e7cdd45-f80a-4167-9225-0450193a8b9c"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5e7cdd45-f80a-4167-9225-0450193a8b9c",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
+    },
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ],
+    "plugins": [
+      "expo-sharing",
+      "expo-updates"
+    ],
+    "owner": "vamshi_77"
   }
 }

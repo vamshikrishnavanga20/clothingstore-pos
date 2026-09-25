@@ -8,7 +8,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { Colors, Spacing, Radii, FontSizes, FontWeights } from '../constants/theme';
+import { Colors, Spacing, Radii, FontSizes, FontWeights, TouchTargets } from '../constants/theme';
 import { hapticTap, hapticSuccess } from '../utils/haptics';
 
 interface SizePickerModalProps {
@@ -60,7 +60,13 @@ export default function SizePickerModal({
               </View>
             </View>
 
-            <TouchableOpacity style={styles.closeBtn} onPress={onClose} delayPressIn={0} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={onClose}
+              delayPressIn={0}
+              activeOpacity={0.7}
+              hitSlop={TouchTargets.hitSlop}
+            >
               <Text style={styles.closeBtnText}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -214,38 +220,45 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   closeBtn: {
-    padding: Spacing.xs,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: Colors.bgInput,
-    borderRadius: Radii.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   closeBtnText: {
     color: Colors.textSecondary,
-    fontSize: FontSizes.body,
+    fontSize: 18,
     fontWeight: FontWeights.bold,
   },
   instructionText: {
     color: Colors.textMuted,
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.body,
     fontWeight: FontWeights.semibold,
     marginVertical: Spacing.sm,
   },
   sizesScroll: {
-    maxHeight: 260,
+    maxHeight: 320,
     marginVertical: Spacing.xs,
   },
   sizesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.sm,
+    gap: Spacing.md,
     paddingVertical: Spacing.xs,
   },
   sizeCard: {
     width: '48%',
     backgroundColor: Colors.bgInput,
-    borderRadius: Radii.md,
-    padding: Spacing.md,
+    borderRadius: Radii.lg,
+    padding: Spacing.md + 2,
     borderWidth: 1.5,
     borderColor: Colors.border,
+    minHeight: 124,
+    justifyContent: 'space-between',
   },
   sizeCardDisabled: {
     opacity: 0.45,
@@ -262,10 +275,30 @@ const styles = StyleSheet.create({
   },
   sizeLabel: {
     color: Colors.textPrimary,
-    fontSize: FontSizes.xl,
+    fontSize: 26,
     fontWeight: FontWeights.black,
   },
   sizeLabelDisabled: {
+    color: Colors.textDim,
+  },
+  addBtnPill: {
+    marginTop: 8,
+    backgroundColor: Colors.gold,
+    paddingVertical: 7,
+    borderRadius: Radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addBtnPillDisabled: {
+    backgroundColor: Colors.bgSurface,
+  },
+  addBtnPillText: {
+    color: Colors.bg,
+    fontSize: 11,
+    fontWeight: FontWeights.black,
+    letterSpacing: 0.5,
+  },
+  addBtnPillTextDisabled: {
     color: Colors.textDim,
   },
   inCartPill: {

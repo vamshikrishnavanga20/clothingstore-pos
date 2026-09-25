@@ -21,6 +21,7 @@ import StatusBadge from '../components/StatusBadge';
 import OrderSuccessModal from '../components/OrderSuccessModal';
 import { Colors, Spacing, Radii, FontSizes, FontWeights } from '../constants/theme';
 import { hapticTap, hapticMedium, hapticSuccess, hapticWarning } from '../utils/haptics';
+import AnimatedNumber from '../components/AnimatedNumber';
 
 type FilterType = 'all' | 'completed' | 'cancelled';
 
@@ -177,15 +178,29 @@ export default function HistoryScreen() {
       {/* Live Shift Summary Strip */}
       <View style={styles.shiftStrip}>
         <View style={styles.shiftCard}>
-          <Text style={styles.shiftNumGold}>₹{shiftMetrics.netRevenue}</Text>
+          <AnimatedNumber
+            value={shiftMetrics.netRevenue}
+            prefix="₹"
+            formatIndian
+            textStyle={styles.shiftNumGold}
+            duration={800}
+          />
           <Text style={styles.shiftLabel}>NET REVENUE</Text>
         </View>
         <View style={styles.shiftCard}>
-          <Text style={styles.shiftNum}>{shiftMetrics.completedCount}</Text>
+          <AnimatedNumber
+            value={shiftMetrics.completedCount}
+            textStyle={styles.shiftNum}
+            duration={600}
+          />
           <Text style={styles.shiftLabel}>PAID BILLS</Text>
         </View>
         <View style={styles.shiftCard}>
-          <Text style={[styles.shiftNum, { color: Colors.orange }]}>{shiftMetrics.refundedCount}</Text>
+          <AnimatedNumber
+            value={shiftMetrics.refundedCount}
+            textStyle={[styles.shiftNum, { color: Colors.orange }]}
+            duration={600}
+          />
           <Text style={styles.shiftLabel}>REFUNDS</Text>
         </View>
         <TouchableOpacity

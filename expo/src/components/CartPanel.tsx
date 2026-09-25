@@ -12,8 +12,9 @@ import {
   Modal,
 } from 'react-native';
 import { PosContext } from '../context/PosContext';
-import { Colors, Spacing, Radii, FontSizes, FontWeights } from '../constants/theme';
+import { Colors, Spacing, Radii, FontSizes, FontWeights, TouchTargets } from '../constants/theme';
 import { hapticTap, hapticMedium, hapticWarning } from '../utils/haptics';
+import AnimatedNumber from './AnimatedNumber';
 
 interface CartPanelProps {
   isTablet: boolean;
@@ -108,6 +109,7 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
               <TouchableOpacity
                 key={opt.key}
                 style={[styles.typeCard, active && styles.typeCardActive]}
+                hitSlop={TouchTargets.hitSlop}
                 onPress={() => {
                   hapticMedium();
                   setOrderType(opt.key as any);
@@ -158,6 +160,7 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
                 styles.quickCustomerChip,
                 customerName === preset && styles.quickCustomerChipActive,
               ]}
+              hitSlop={TouchTargets.hitSlop}
               onPress={() => {
                 hapticTap();
                 setCustomerName(preset);
@@ -311,7 +314,7 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
                       <TouchableOpacity
                         style={styles.stepperBtn}
                         delayPressIn={0}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        hitSlop={TouchTargets.hitSlop}
                         onPress={() => {
                           hapticTap();
                           updateCart({ id: item.productId, name: item.productName, sellingPrice: item.unitSellingPrice }, item.size, -1);
@@ -324,7 +327,7 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
                         style={[styles.stepperBtn, isAtMax && styles.stepperBtnDisabled]}
                         disabled={isAtMax}
                         delayPressIn={0}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        hitSlop={TouchTargets.hitSlop}
                         onPress={() => {
                           hapticTap();
                           updateCart({ id: item.productId, name: item.productName, sellingPrice: item.unitSellingPrice }, item.size, 1, item.maxStock);
@@ -360,6 +363,7 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
                 <TouchableOpacity
                   key={preset}
                   style={[styles.discountChip, active && styles.discountChipActive]}
+                  hitSlop={TouchTargets.hitSlop}
                   onPress={() => {
                     hapticTap();
                     setDiscountInput(preset);
@@ -389,8 +393,9 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
                   key={tender.id}
                   style={[
                     styles.tenderCard,
-                    active && { borderColor: tender.color, backgroundColor: 'rgba(255,255,255,0.06)' },
+                    active && { borderColor: tender.color, backgroundColor: 'rgba(255,255,255,0.08)' },
                   ]}
+                  hitSlop={TouchTargets.hitSlop}
                   onPress={() => {
                     hapticTap();
                     setPaymentMethod(tender.id as any);
@@ -449,33 +454,33 @@ export default function CartPanel({ isTablet, onCloseSheet, onOpenNotes }: CartP
           <View style={styles.calcSummary}>
             <View style={styles.calcLine}>
               <Text style={styles.calcLabel}>Subtotal</Text>
-              <Text style={styles.calcValue}>₹{cartTotal}</Text>
+              <AnimatedNumber value={cartTotal} prefix="₹" textStyle={styles.calcValue} formatIndian duration={500} />
             </View>
             {discountAmount > 0 && (
               <View style={styles.calcLine}>
                 <Text style={styles.calcLabel}>Store Discount</Text>
-                <Text style={[styles.calcValue, { color: Colors.emerald }]}>−₹{discountAmount}</Text>
+                <AnimatedNumber value={discountAmount} prefix="−₹" textStyle={[styles.calcValue, { color: Colors.emerald }]} formatIndian duration={500} />
               </View>
             )}
             {loyaltyDiscount > 0 && (
               <View style={styles.calcLine}>
                 <Text style={styles.calcLabel}>⭐ VIP Points Redeemed</Text>
-                <Text style={[styles.calcValue, { color: Colors.gold }]}>−₹{loyaltyDiscount}</Text>
+                <AnimatedNumber value={loyaltyDiscount} prefix="−₹" textStyle={[styles.calcValue, { color: Colors.gold }]} formatIndian duration={500} />
               </View>
             )}
             <View style={styles.calcLine}>
               <Text style={styles.calcLabel}>GST (5% Apparel Tax)</Text>
-              <Text style={styles.calcValue}>₹{gstTax}</Text>
+              <AnimatedNumber value={gstTax} prefix="₹" textStyle={styles.calcValue} formatIndian duration={500} decimals={2} />
             </View>
           </View>
         )}
 
-        <View style={styles.totalRow}>
+          <View style={styles.totalRow}>
           <View>
             <Text style={styles.totalLabel}>TOTAL AMOUNT</Text>
             <Text style={styles.taxNote}>Inclusive of 5% GST</Text>
           </View>
-          <Text style={styles.totalValue}>₹{grandTotal}</Text>
+          <AnimatedNumber value={grandTotal} prefix="₹" textStyle={styles.totalValue} formatIndian duration={700} decimals={2} />
         </View>
 
         <TouchableOpacity
@@ -616,12 +621,14 @@ const styles = StyleSheet.create({
   },
   typeCard: {
     flex: 1,
-    paddingVertical: Spacing.sm - 2,
+    paddingVertical: 10,
     backgroundColor: Colors.bgInput,
     borderRadius: Radii.sm,
     borderWidth: 1,
     borderColor: Colors.border,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: TouchTargets.compact,
   },
   typeCardActive: {
     borderColor: Colors.gold,
@@ -629,7 +636,7 @@ const styles = StyleSheet.create({
   },
   typeText: {
     color: Colors.textMuted,
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.body,
     fontWeight: FontWeights.bold,
   },
   typeTextActive: {
@@ -648,33 +655,36 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: Colors.textDim,
-    fontSize: FontSizes.xs - 1,
+    fontSize: FontSizes.xs,
     fontWeight: FontWeights.bold,
-    marginBottom: 3,
+    marginBottom: 4,
   },
   textInput: {
     backgroundColor: Colors.bgInput,
-    borderRadius: Radii.sm,
+    borderRadius: Radii.md,
     borderWidth: 1,
     borderColor: Colors.border,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
+    minHeight: 46,
     color: Colors.textPrimary,
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.body,
   },
   quickCustomerRow: {
     flexDirection: 'row',
-    gap: 6,
+    gap: 8,
     marginTop: 8,
     flexWrap: 'wrap',
   },
   quickCustomerChip: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radii.xs,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    minHeight: 36,
+    borderRadius: Radii.sm,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    justifyContent: 'center',
   },
   quickCustomerChipActive: {
     backgroundColor: 'rgba(212, 175, 55, 0.15)',
@@ -682,7 +692,7 @@ const styles = StyleSheet.create({
   },
   quickCustomerText: {
     color: Colors.textDim,
-    fontSize: 9.5,
+    fontSize: 12,
     fontWeight: FontWeights.bold,
   },
   quickCustomerTextActive: {
@@ -757,31 +767,37 @@ const styles = StyleSheet.create({
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.bgInput,
-    borderRadius: Radii.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    backgroundColor: '#121A2D',
+    borderRadius: Radii.md,
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.3)',
+    height: 44,
+    overflow: 'hidden',
   },
   stepperBtn: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs - 1,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
   stepperBtnDisabled: {
-    opacity: 0.3,
+    opacity: 0.25,
   },
   stepperBtnText: {
-    color: Colors.textPrimary,
-    fontSize: FontSizes.md,
-    fontWeight: FontWeights.bold,
+    color: Colors.gold,
+    fontSize: 22,
+    fontWeight: FontWeights.black,
+    lineHeight: 24,
   },
   stepperBtnTextDisabled: {
     color: Colors.textDim,
   },
   stepperQty: {
     color: Colors.textPrimary,
-    fontSize: FontSizes.sm,
-    fontWeight: FontWeights.extrabold,
-    minWidth: 20,
+    fontSize: FontSizes.md,
+    fontWeight: FontWeights.black,
+    minWidth: 32,
     textAlign: 'center',
   },
   cartItemTotal: {
@@ -813,12 +829,14 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   discountChip: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    minHeight: TouchTargets.compact,
     borderRadius: Radii.sm,
     backgroundColor: Colors.bgInput,
     borderWidth: 1,
     borderColor: Colors.border,
+    justifyContent: 'center',
   },
   discountChipActive: {
     backgroundColor: Colors.gold,
@@ -826,7 +844,7 @@ const styles = StyleSheet.create({
   },
   discountChipText: {
     color: Colors.textMuted,
-    fontSize: FontSizes.xs,
+    fontSize: 13,
     fontWeight: FontWeights.bold,
   },
   discountChipTextActive: {
@@ -836,21 +854,23 @@ const styles = StyleSheet.create({
   tenderGrid: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    marginTop: 4,
+    marginTop: 6,
   },
   tenderCard: {
     flex: 1,
-    paddingVertical: Spacing.sm,
-    borderRadius: Radii.sm,
+    paddingVertical: 14,
+    minHeight: TouchTargets.comfortable,
+    borderRadius: Radii.md,
     backgroundColor: Colors.bgInput,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: Colors.border,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   tenderText: {
     color: Colors.textMuted,
-    fontSize: FontSizes.xs,
-    fontWeight: FontWeights.bold,
+    fontSize: 14,
+    fontWeight: FontWeights.extrabold,
   },
   bottomSection: {
     padding: Spacing.lg,
@@ -901,19 +921,27 @@ const styles = StyleSheet.create({
   },
   checkoutBtn: {
     backgroundColor: Colors.gold,
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
+    minHeight: TouchTargets.prominent,
     borderRadius: Radii.md,
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Colors.gold,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
   },
   checkoutBtnDisabled: {
     backgroundColor: Colors.bgInput,
     opacity: 0.5,
+    shadowOpacity: 0,
   },
   checkoutBtnText: {
     color: Colors.bg,
-    fontSize: FontSizes.body,
+    fontSize: 16,
     fontWeight: FontWeights.black,
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   upiQrBox: {
     marginTop: Spacing.sm,

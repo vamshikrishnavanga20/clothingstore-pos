@@ -103,8 +103,8 @@ export function useOrders(activeBranchId: string) {
       }
       return FALLBACK_PRODUCTS;
     },
-    staleTime: 1000,
-    refetchInterval: 3000,
+    staleTime: 1000 * 15,
+    refetchInterval: 30000,
     refetchIntervalInBackground: false,
     refetchOnMount: 'always',
   });
@@ -147,8 +147,8 @@ export function useOrders(activeBranchId: string) {
       const saved = await safeStorage.getItem(STORAGE_ORDERS_KEY);
       return saved ? JSON.parse(saved) : [];
     },
-    staleTime: 1000,
-    refetchInterval: 3000,
+    staleTime: 1000 * 15,
+    refetchInterval: 30000,
     refetchIntervalInBackground: false,
     refetchOnMount: 'always',
   });

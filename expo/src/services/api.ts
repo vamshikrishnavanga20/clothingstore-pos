@@ -8,7 +8,7 @@ export const DEFAULT_API_URL = __DEV__
   ? Platform.OS === 'android'
     ? `http://${DEV_MACHINE_IP}:3000`
     : `http://localhost:3000`
-  : 'https://your-production-domain.com';
+  : 'https://clothingstore-pos.vercel.app';
 
 let cachedApiUrl: string | null = null;
 

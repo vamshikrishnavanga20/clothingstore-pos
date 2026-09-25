@@ -12,8 +12,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Colors, Spacing, Radii, FontSizes, FontWeights } from '../constants/theme';
-import { hapticSuccess } from '../utils/haptics';
+import { hapticSuccess, hapticTap } from '../utils/haptics';
 import { sendDigitalInvoice } from '../services/api';
+import { printReceipt, shareReceipt, ReceiptData } from '../utils/receiptPrinter';
 
 interface OrderSuccessModalProps {
   visible: boolean;
@@ -32,6 +33,7 @@ export default function OrderSuccessModal({
   const ringAnim = useRef(new Animated.Value(0)).current;
   const [isSendingCloudWa, setIsSendingCloudWa] = useState(false);
   const [cloudWaStatus, setCloudWaStatus] = useState('');
+  const [isPrinting, setIsPrinting] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -151,6 +153,51 @@ export default function OrderSuccessModal({
     }
   };
 
+  const buildReceiptData = (): ReceiptData => ({
+    billingId: order.billingId,
+    branchName: order.branchName || 'Retail Branch',
+    customerName: order.customerName || 'Walk-in Guest',
+    customerPhone: order.customerPhone || 'N/A',
+    cashierName: order.cashierName || 'Staff',
+    paymentMethod: order.paymentMethod || 'Cash',
+    items: (order.items || []).map((it: any) => ({
+      productName: it.productName,
+      size: it.size,
+      quantity: it.quantity,
+      unitSellingPrice: it.unitSellingPrice,
+      subtotal: it.unitSellingPrice * it.quantity,
+    })),
+    subtotal: order.subtotal || 0,
+    discount: order.discount || 0,
+    tax: order.tax || 0,
+    total: order.total || 0,
+    pointsEarned: order.pointsEarned,
+    pointsRedeemed: order.pointsRedeemed,
+    createdAt: order.createdAt || new Date().toISOString(),
+  });
+
+  const handlePrintReceipt = async () => {
+    hapticTap();
+    setIsPrinting(true);
+    try {
+      await printReceipt(buildReceiptData());
+    } catch (e) {
+      // Silently fail — user cancelled print
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
+  const handleSharePdf = async () => {
+    hapticTap();
+    try {
+      await shareReceipt(buildReceiptData());
+    } catch (e) {
+      // Fallback to text share
+      handleShareSystem();
+    }
+  };
+
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onDismiss}>
       <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
@@ -243,7 +290,26 @@ export default function OrderSuccessModal({
               )}
             </TouchableOpacity>
             <TouchableOpacity style={styles.shareBtn} onPress={handleShareSystem} activeOpacity={0.8}>
-              <Text style={styles.shareBtnText}>📤 Print / Share</Text>
+              <Text style={styles.shareBtnText}>📤 Share</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Print & PDF Actions */}
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.printBtn}
+              onPress={handlePrintReceipt}
+              activeOpacity={0.8}
+              disabled={isPrinting}
+            >
+              {isPrinting ? (
+                <ActivityIndicator size="small" color={Colors.gold} />
+              ) : (
+                <Text style={styles.printBtnText}>🖨️ Print Receipt</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.pdfBtn} onPress={handleSharePdf} activeOpacity={0.8}>
+              <Text style={styles.pdfBtnText}>📋 Save PDF</Text>
             </TouchableOpacity>
           </View>
 
@@ -400,6 +466,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     alignItems: 'center',
+  },
+  printBtn: {
+    flex: 1,
+    backgroundColor: Colors.goldDim,
+    paddingVertical: Spacing.md - 2,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: Colors.goldBorder,
+    alignItems: 'center',
+  },
+  printBtnText: {
+    color: Colors.gold,
+    fontSize: FontSizes.xs,
+    fontWeight: FontWeights.black,
+  },
+  pdfBtn: {
+    flex: 1,
+    backgroundColor: 'rgba(59, 130, 246, 0.12)',
+    paddingVertical: Spacing.md - 2,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.35)',
+    alignItems: 'center',
+  },
+  pdfBtnText: {
+    color: '#3B82F6',
+    fontSize: FontSizes.xs,
+    fontWeight: FontWeights.black,
   },
   shareBtnText: {
     color: Colors.textPrimary,

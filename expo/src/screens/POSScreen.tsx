@@ -20,8 +20,9 @@ import SizePickerModal from '../components/SizePickerModal';
 import Header from '../components/Header';
 import CartPanel from '../components/CartPanel';
 import { useIsTablet, useResponsiveColumns } from '../constants/layout';
-import { Colors, Spacing, Radii, FontSizes, FontWeights } from '../constants/theme';
+import { Colors, Spacing, Radii, FontSizes, FontWeights, TouchTargets } from '../constants/theme';
 import { hapticTap, hapticMedium } from '../utils/haptics';
+import AnimatedNumber from '../components/AnimatedNumber';
 
 import { DEFAULT_API_URL } from '../services/api';
 
@@ -124,6 +125,7 @@ const ApparelCard = React.memo(
 
           <TouchableOpacity
             style={[styles.sizeSelectBtn, isOut && styles.sizeSelectBtnDisabled]}
+            hitSlop={TouchTargets.hitSlop}
             onPress={() => {
               if (!isOut) {
                 hapticTap();
@@ -135,7 +137,7 @@ const ApparelCard = React.memo(
             disabled={isOut}
           >
             <Text style={[styles.sizeSelectBtnText, isOut && styles.sizeSelectBtnTextDisabled]}>
-              {isOut ? 'Sold Out' : 'Select Size +'}
+              {isOut ? 'Sold Out' : '✦ Select Size +'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -267,7 +269,7 @@ export default function POSScreen() {
               </View>
             )}
             {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearSearchBtn} delayPressIn={0}>
+              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearSearchBtn} hitSlop={TouchTargets.hitSlop} delayPressIn={0}>
                 <Text style={styles.clearSearchText}>✕</Text>
               </TouchableOpacity>
             )}
@@ -286,6 +288,7 @@ export default function POSScreen() {
                 <TouchableOpacity
                   key={cat}
                   style={[styles.categoryPill, active && styles.categoryPillActive]}
+                  hitSlop={TouchTargets.hitSlop}
                   onPress={() => {
                     hapticMedium();
                     setActiveCategoryId(cat);
@@ -350,7 +353,7 @@ export default function POSScreen() {
             </View>
 
             <View style={styles.floatingRight}>
-              <Text style={[styles.floatingTotal, cartQty === 0 && styles.floatingTotalEmpty]}>₹{cartTotal}</Text>
+              <AnimatedNumber value={cartTotal} prefix="₹" textStyle={[styles.floatingTotal, cartQty === 0 && styles.floatingTotalEmpty]} formatIndian duration={500} />
               <Text style={[styles.reviewBtnText, cartQty === 0 && styles.reviewBtnTextEmpty]}>
                 {cartQty === 0 ? 'Open Cart →' : 'Review & Bill →'}
               </Text>
@@ -412,44 +415,48 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.xs + 2,
     paddingLeft: Spacing.md,
     paddingRight: 40,
-    borderRadius: Radii.sm,
-    height: 38,
+    borderRadius: Radii.md,
+    height: TouchTargets.min,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: 'rgba(212, 175, 55, 0.3)',
   },
   searchIcon: {
-    fontSize: 13,
-    marginRight: 6,
+    fontSize: 16,
+    marginRight: 8,
   },
   searchInput: {
     flex: 1,
     color: Colors.textPrimary,
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.body,
     paddingVertical: 0,
   },
   clearSearchBtn: {
-    padding: 4,
+    padding: 8,
   },
   clearSearchText: {
     color: Colors.textDim,
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.body,
     fontWeight: FontWeights.bold,
   },
   categoryScroll: {
-    maxHeight: 44,
-    marginBottom: Spacing.xs,
+    maxHeight: 56,
+    marginVertical: Spacing.xs,
   },
   categoryScrollContent: {
     paddingHorizontal: Spacing.md,
     gap: Spacing.sm,
+    alignItems: 'center',
   },
   categoryPill: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs + 1,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    minHeight: TouchTargets.compact,
     borderRadius: Radii.full,
     backgroundColor: Colors.bgInput,
     borderWidth: 1,
     borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryPillActive: {
     backgroundColor: Colors.gold,
@@ -457,7 +464,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     color: Colors.textMuted,
-    fontSize: FontSizes.xs,
+    fontSize: 13,
     fontWeight: FontWeights.bold,
   },
   categoryTextActive: {
@@ -466,7 +473,7 @@ const styles = StyleSheet.create({
   },
   gridContent: {
     paddingHorizontal: Spacing.sm,
-    paddingBottom: 85,
+    paddingBottom: 95,
   },
   card: {
     backgroundColor: '#0E1424',
@@ -601,13 +608,16 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   sizeSelectBtn: {
-    marginTop: Spacing.sm - 2,
-    backgroundColor: 'rgba(212, 175, 55, 0.12)',
-    paddingVertical: 5,
+    marginTop: Spacing.sm,
+    backgroundColor: 'rgba(212, 175, 55, 0.15)',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    minHeight: TouchTargets.compact,
     borderRadius: Radii.pill,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.35)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(212, 175, 55, 0.45)',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   sizeSelectBtnDisabled: {
     opacity: 0.35,
@@ -616,7 +626,7 @@ const styles = StyleSheet.create({
   },
   sizeSelectBtnText: {
     color: Colors.gold,
-    fontSize: FontSizes.xs,
+    fontSize: 13,
     fontWeight: FontWeights.black,
     letterSpacing: 0.3,
   },
@@ -642,8 +652,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.gold,
     borderRadius: Radii.pill,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: 14,
+    minHeight: TouchTargets.prominent,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },

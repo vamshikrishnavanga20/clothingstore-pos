@@ -9,6 +9,7 @@ import LoginScreen from '../screens/LoginScreen';
 import POSScreen from '../screens/POSScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import StockScreen from '../screens/StockScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 import AdminRevenueScreen from '../screens/admin/AdminRevenueScreen';
 import {
   Colors,
@@ -21,7 +22,7 @@ import { hapticSelection } from '../utils/haptics';
 
 const Tab = createBottomTabNavigator();
 
-type TabIconType = 'order' | 'status' | 'stock' | 'revenue';
+type TabIconType = 'order' | 'status' | 'stock' | 'revenue' | 'settings';
 
 function TabIcon({ type, focused, isTablet }: { type: TabIconType; focused: boolean; isTablet: boolean }) {
   const color = focused ? Colors.gold : '#71717A';
@@ -60,6 +61,19 @@ function TabIcon({ type, focused, isTablet }: { type: TabIconType; focused: bool
             <View style={[tabStyles.revenueBar3, { backgroundColor: color }]} />
           </View>
           <View style={[tabStyles.revenueBase, { backgroundColor: color }]} />
+        </View>
+      )}
+
+      {type === 'settings' && (
+        <View style={tabStyles.settingsWrap}>
+          <View style={[tabStyles.settingsGearOuter, { borderColor: color }]}>
+            <View style={[tabStyles.settingsGearInner, { backgroundColor: color }]} />
+          </View>
+          {/* Gear teeth */}
+          <View style={[tabStyles.gearTooth1, { backgroundColor: color }]} />
+          <View style={[tabStyles.gearTooth2, { backgroundColor: color }]} />
+          <View style={[tabStyles.gearTooth3, { backgroundColor: color }]} />
+          <View style={[tabStyles.gearTooth4, { backgroundColor: color }]} />
         </View>
       )}
     </View>
@@ -185,6 +199,57 @@ const tabStyles = StyleSheet.create({
     borderRadius: 0.8,
     opacity: 0.5,
   },
+  settingsWrap: {
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsGearOuter: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 1.8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsGearInner: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+  gearTooth1: {
+    position: 'absolute',
+    width: 3,
+    height: 3,
+    borderRadius: 1,
+    top: 0,
+    left: 9.5,
+  },
+  gearTooth2: {
+    position: 'absolute',
+    width: 3,
+    height: 3,
+    borderRadius: 1,
+    bottom: 0,
+    left: 9.5,
+  },
+  gearTooth3: {
+    position: 'absolute',
+    width: 3,
+    height: 3,
+    borderRadius: 1,
+    left: 0,
+    top: 9.5,
+  },
+  gearTooth4: {
+    position: 'absolute',
+    width: 3,
+    height: 3,
+    borderRadius: 1,
+    right: 0,
+    top: 9.5,
+  },
 });
 
 function CashierNavigator({ isTablet, tabBarHeight }: { isTablet: boolean; tabBarHeight: number }) {
@@ -250,6 +315,14 @@ function CashierNavigator({ isTablet, tabBarHeight }: { isTablet: boolean; tabBa
         options={{
           tabBarLabel: 'Stock Matrix',
           tabBarIcon: ({ focused }) => <TabIcon type="stock" focused={focused} isTablet={isTablet} />,
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({ focused }) => <TabIcon type="settings" focused={focused} isTablet={isTablet} />,
         }}
       />
     </Tab.Navigator>
@@ -327,6 +400,14 @@ function AdminNavigator({ isTablet, tabBarHeight }: { isTablet: boolean; tabBarH
         options={{
           tabBarLabel: 'Stock Matrix',
           tabBarIcon: ({ focused }) => <TabIcon type="stock" focused={focused} isTablet={isTablet} />,
+        }}
+      />
+      <Tab.Screen
+        name="AdminSettings"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({ focused }) => <TabIcon type="settings" focused={focused} isTablet={isTablet} />,
         }}
       />
     </Tab.Navigator>

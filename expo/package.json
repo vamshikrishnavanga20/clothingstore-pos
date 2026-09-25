@@ -6,7 +6,13 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:preview": "eas build --platform android --profile preview",
+    "build:production": "eas build --platform android --profile production",
+    "build:aab": "eas build --platform android --profile production-aab",
+    "update:preview": "eas update --channel preview",
+    "update:production": "eas update --channel production",
+    "lint": "expo lint"
   },
   "dependencies": {
     "@expo/metro-runtime": "~57.0.16",
@@ -16,7 +22,10 @@
     "@tanstack/react-query": "^5.103.2",
     "expo": "^57.0.0",
     "expo-haptics": "^57.0.3",
+    "expo-print": "~57.0.2",
+    "expo-sharing": "~57.0.22",
     "expo-status-bar": "~57.0.1",
+    "expo-updates": "~57.0.23",
     "fbjs": "^3.0.5",
     "react": "19.2.3",
     "react-dom": "19.2.3",
