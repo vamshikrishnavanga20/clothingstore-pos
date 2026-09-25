@@ -38,6 +38,10 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "expo",
+    "expo/**/*",
+    "mobile-billing-app",
+    "mobile-billing-app/**/*"
   ]
 }
