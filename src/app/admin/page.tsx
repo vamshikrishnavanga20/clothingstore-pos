@@ -221,8 +221,8 @@ export default function EnterpriseAdminOS() {
       const q = itemSalesSearch.toLowerCase();
       list = list.filter(
         (it) =>
-          it.name.toLowerCase().includes(q) ||
-          it.category.toLowerCase().includes(q) ||
+          (it.name || '').toLowerCase().includes(q) ||
+          (it.category || '').toLowerCase().includes(q) ||
           (it.sku && it.sku.toLowerCase().includes(q))
       );
     }
@@ -921,24 +921,36 @@ export default function EnterpriseAdminOS() {
     }
   };
 
-  const filteredCatalogProducts = products.filter((p) => {
+  const filteredCatalogProducts = (products || []).filter((p) => {
+    if (!p) return false;
+    const cat = (p.category || '').toLowerCase();
+    const name = (p.name || '').toLowerCase();
+    const sku = (p.sku || '').toLowerCase();
+    const q = (catalogSearch || '').trim().toLowerCase();
     const matchCategory =
-      catalogCategory === 'All' || p.category.toLowerCase() === catalogCategory.toLowerCase();
+      catalogCategory === 'All' || cat === (catalogCategory || '').toLowerCase();
     const matchSearch =
-      catalogSearch === '' ||
-      p.name.toLowerCase().includes(catalogSearch.toLowerCase()) ||
-      p.sku.toLowerCase().includes(catalogSearch.toLowerCase());
+      q === '' ||
+      name.includes(q) ||
+      sku.includes(q) ||
+      cat.includes(q);
     return matchCategory && matchSearch;
   });
 
-  const filteredInventoryProducts = products.filter((p) => {
+  const filteredInventoryProducts = (products || []).filter((p) => {
+    if (!p) return false;
+    const cat = (p.category || '').toLowerCase();
+    const name = (p.name || '').toLowerCase();
+    const sku = (p.sku || '').toLowerCase();
+    const q = (inventorySearch || '').trim().toLowerCase();
     const matchCategory =
       selectedInventoryCategory === 'All' ||
-      p.category.toLowerCase() === selectedInventoryCategory.toLowerCase();
+      cat === (selectedInventoryCategory || '').toLowerCase();
     const matchSearch =
-      inventorySearch === '' ||
-      p.name.toLowerCase().includes(inventorySearch.toLowerCase()) ||
-      p.sku.toLowerCase().includes(inventorySearch.toLowerCase());
+      q === '' ||
+      name.includes(q) ||
+      sku.includes(q) ||
+      cat.includes(q);
     return matchCategory && matchSearch;
   });
 
@@ -2690,18 +2702,37 @@ export default function EnterpriseAdminOS() {
                         themeMode === 'dark' ? 'border-white/[0.15] hover:border-[#E5B869]/50 bg-[#0E1322]/50' : 'border-slate-300 hover:border-[#E5B869]/70 bg-slate-50'
                       }`}>
                         {catImage ? (
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <img src={catImage} alt="Category" className="w-12 h-12 object-cover rounded-xl border border-slate-200" />
-                              <span className={`text-xs truncate max-w-[160px] ${themeMode === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Photo Attached</span>
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <img src={catImage} alt="Category" className="w-12 h-12 object-cover rounded-xl border border-slate-200" />
+                                <span className={`text-xs truncate max-w-[160px] ${themeMode === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Photo Attached</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setCatImage('')}
+                                className="text-xs text-red-500 hover:underline"
+                              >
+                                Remove
+                              </button>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => setCatImage('')}
-                              className="text-xs text-red-500 hover:underline"
-                            >
-                              Remove
-                            </button>
+                            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-start">
+                              <label className={`cursor-pointer px-3 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1.5 ${
+                                themeMode === 'dark' ? 'bg-[#141A2D] text-[#E5B869] border-[#E5B869]/40' : 'bg-white text-slate-800 border-slate-300 shadow-sm'
+                              }`}>
+                                <ImagePlus className="w-3.5 h-3.5" />
+                                <span>Replace Photo</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) handleCatImageUpload(f);
+                                  }}
+                                />
+                              </label>
+                            </div>
                           </div>
                         ) : (
                           <label className="cursor-pointer flex flex-col items-center justify-center py-2">
@@ -2727,6 +2758,18 @@ export default function EnterpriseAdminOS() {
                             />
                           </label>
                         )}
+
+                        <div className="mt-2 pt-2 border-t border-white/[0.06]">
+                          <input
+                            type="url"
+                            value={catImage}
+                            onChange={(e) => setCatImage(e.target.value)}
+                            placeholder="Or paste image URL here..."
+                            className={`w-full rounded-xl px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-[#E5B869] ${
+                              themeMode === 'dark' ? 'bg-[#141A2D] border border-white/[0.1] text-white' : 'bg-white border border-slate-300 text-slate-900'
+                            }`}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -2768,10 +2811,10 @@ export default function EnterpriseAdminOS() {
 
                   <div className="space-y-3">
                     {categories
-                      .filter((c) => c.name.toLowerCase().includes(catSearch.toLowerCase()))
+                      .filter((c) => (c.name || '').toLowerCase().includes((catSearch || '').toLowerCase()))
                       .map((cat) => {
-                        const itemsCount = products.filter(
-                          (p) => p.category.toLowerCase() === cat.name.toLowerCase()
+                        const itemsCount = (products || []).filter(
+                          (p) => p && (p.category || '').toLowerCase() === (cat.name || '').toLowerCase()
                         ).length;
 
                         return (
@@ -3003,8 +3046,8 @@ export default function EnterpriseAdminOS() {
                   All Departments ({products.length})
                 </button>
                 {categories.map((c) => {
-                  const count = products.filter(
-                    (p) => p.category.toLowerCase() === c.name.toLowerCase()
+                  const count = (products || []).filter(
+                    (p) => p && (p.category || '').toLowerCase() === (c.name || '').toLowerCase()
                   ).length;
                   return (
                     <button
@@ -3025,10 +3068,10 @@ export default function EnterpriseAdminOS() {
               <div className="space-y-8">
                 {(selectedInventoryCategory === 'All'
                   ? categories
-                  : categories.filter((c) => c.name.toLowerCase() === selectedInventoryCategory.toLowerCase())
+                  : categories.filter((c) => (c.name || '').toLowerCase() === (selectedInventoryCategory || '').toLowerCase())
                 ).map((cat) => {
-                  const catProducts = products.filter(
-                    (p) => p.category.toLowerCase() === cat.name.toLowerCase()
+                  const catProducts = (products || []).filter(
+                    (p) => p && (p.category || '').toLowerCase() === (cat.name || '').toLowerCase()
                   );
                   if (catProducts.length === 0) return null;
 
@@ -4224,52 +4267,100 @@ export default function EnterpriseAdminOS() {
                 )}
               </div>
 
-              <div>
-                <label className={`block text-[10px] font-bold uppercase tracking-wider mb-1 ${
-                  themeMode === 'dark' ? 'text-slate-400' : 'text-slate-500'
-                }`}>
-                  Garment Photography (Direct File Upload)
-                </label>
-                <div className={`relative border-2 border-dashed rounded-2xl p-4 text-center transition-all ${
-                  themeMode === 'dark' ? 'border-white/[0.15] hover:border-[#E5B869]/60 bg-[#0E1322]' : 'border-slate-300 hover:border-[#E5B869]/70 bg-slate-50'
+              {/* ========================================================= */}
+              {/* GARMENT PHOTOGRAPHY (DIRECT UPLOAD & EDIT) */}
+              {/* ========================================================= */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className={`block text-[10px] font-bold uppercase tracking-wider ${
+                    themeMode === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    Garment Photography (Upload or Paste URL)
+                  </label>
+                  {clothForm.image && (
+                    <button
+                      type="button"
+                      onClick={() => setClothForm((prev) => ({ ...prev, image: '' }))}
+                      className="text-[11px] text-red-500 hover:text-red-400 hover:underline flex items-center gap-1 font-semibold"
+                    >
+                      <Trash2 className="w-3 h-3" /> Clear Image
+                    </button>
+                  )}
+                </div>
+
+                {/* Upload & Preview Card */}
+                <div className={`p-4 rounded-2xl border transition-all ${
+                  themeMode === 'dark' ? 'bg-[#0E1322] border-white/[0.1]' : 'bg-slate-50 border-slate-200'
                 }`}>
                   {clothForm.image ? (
-                    <div className="flex items-center justify-between">
+                    <div className="space-y-3">
                       <div className="flex items-center gap-3">
-                        <img
-                          src={clothForm.image}
-                          alt="Garment Preview"
-                          className="w-14 h-14 object-cover rounded-xl border border-slate-300"
-                        />
-                        <div className="text-left">
-                          <p className={`text-xs font-bold ${themeMode === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                            Apparel Photo Ready
-                          </p>
-                          <p className={`text-[10px] truncate max-w-[200px] ${themeMode === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                            {clothForm.image.slice(0, 35)}...
+                        <div className="relative w-16 h-16 rounded-xl overflow-hidden border-2 border-[#E5B869]/50 shrink-0 bg-neutral-900 shadow-md">
+                          <img
+                            src={clothForm.image}
+                            alt="Garment Preview"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop';
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Photo Attached
+                            </span>
+                          </div>
+                          <p className={`text-[10px] truncate mt-0.5 font-mono ${
+                            themeMode === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                          }`}>
+                            {clothForm.image}
                           </p>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setClothForm((prev) => ({ ...prev, image: '' }))}
-                        className="text-xs text-red-500 hover:underline"
-                      >
-                        Remove
-                      </button>
+
+                      {/* Action buttons: Replace via upload or edit URL */}
+                      <div className="flex items-center gap-2 pt-1 border-t border-white/[0.06]">
+                        <label className={`cursor-pointer px-3 py-1.5 rounded-xl border text-[11px] font-bold flex items-center gap-1.5 transition-all ${
+                          themeMode === 'dark'
+                            ? 'bg-[#141A2D] hover:bg-[#1c243e] text-[#E5B869] border-[#E5B869]/40'
+                            : 'bg-white hover:bg-slate-100 text-amber-900 border-amber-300 shadow-sm'
+                        }`}>
+                          {clothImageUploading ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <ImagePlus className="w-3.5 h-3.5" />
+                          )}
+                          <span>{clothImageUploading ? 'Uploading...' : 'Replace with New Photo'}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) handleClothImageUpload(f);
+                            }}
+                          />
+                        </label>
+                      </div>
                     </div>
                   ) : (
-                    <label className="cursor-pointer flex flex-col items-center justify-center py-3">
+                    <label className={`cursor-pointer border-2 border-dashed rounded-xl p-5 text-center flex flex-col items-center justify-center transition-all ${
+                      themeMode === 'dark'
+                        ? 'border-white/[0.15] hover:border-[#E5B869]/70 bg-[#141A2D]/50'
+                        : 'border-slate-300 hover:border-[#E5B869]/70 bg-white'
+                    }`}>
                       {clothImageUploading ? (
                         <RefreshCw className="w-8 h-8 text-[#E5B869] animate-spin mb-2" />
                       ) : (
                         <ImagePlus className="w-8 h-8 text-[#E5B869] mb-2" />
                       )}
                       <span className={`text-xs font-bold ${themeMode === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                        {clothImageUploading ? 'Uploading file...' : 'Drop or browse cloth image from device'}
+                        {clothImageUploading ? 'Uploading apparel photo to S3...' : 'Upload Garment Photo from Device'}
                       </span>
-                      <span className={`text-[10px] mt-0.5 ${themeMode === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
-                        PNG, JPG, WEBP up to 10MB
+                      <span className={`text-[10px] mt-0.5 ${themeMode === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                        JPG, PNG, WEBP up to 10MB (Automatically hosted on AWS S3)
                       </span>
                       <input
                         type="file"
@@ -4282,6 +4373,28 @@ export default function EnterpriseAdminOS() {
                       />
                     </label>
                   )}
+
+                  {/* Direct Image URL input for flexible URL pasting or editing */}
+                  <div className="mt-3 pt-3 border-t border-white/[0.06]">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${
+                        themeMode === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                      }`}>
+                        Or Paste Direct Image Link (URL)
+                      </span>
+                    </div>
+                    <input
+                      type="url"
+                      value={clothForm.image}
+                      onChange={(e) => setClothForm({ ...clothForm, image: e.target.value })}
+                      placeholder="https://images.unsplash.com/... or https://..."
+                      className={`w-full rounded-xl px-3.5 py-2 text-xs font-mono focus:outline-none focus:border-[#E5B869] ${
+                        themeMode === 'dark'
+                          ? 'bg-[#141A2D] border border-white/[0.1] text-white placeholder:text-slate-500'
+                          : 'bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400'
+                      }`}
+                    />
+                  </div>
                 </div>
               </div>
 
