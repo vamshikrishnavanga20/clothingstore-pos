@@ -92,6 +92,15 @@ export default function StorefrontHomePage() {
           setProducts((prev) => prev.filter((p) => p.id !== deletedId));
           setSelectedProductForDetail((curr) => (curr?.id === deletedId ? null : curr));
           refreshProducts();
+        } else if (event.data?.type === 'PRODUCT_UPDATED' && event.data.product) {
+          const updatedProd = event.data.product;
+          setProducts((prev) =>
+            prev.map((p) => (p.id === updatedProd.id ? updatedProd : p))
+          );
+          setSelectedProductForDetail((curr) =>
+            curr?.id === updatedProd.id ? updatedProd : curr
+          );
+          refreshProducts();
         } else if (event.data?.type === 'CATEGORY_DELETED') {
           const cId = event.data.categoryId;
           setCategories((prev) => prev.filter((c) => c.id !== cId));
@@ -112,6 +121,14 @@ export default function StorefrontHomePage() {
             const deletedId = parsed.productId;
             setProducts((prev) => prev.filter((p) => p.id !== deletedId));
             setSelectedProductForDetail((curr) => (curr?.id === deletedId ? null : curr));
+          } else if (parsed.type === 'PRODUCT_UPDATED' && parsed.product) {
+            const updatedProd = parsed.product;
+            setProducts((prev) =>
+              prev.map((p) => (p.id === updatedProd.id ? updatedProd : p))
+            );
+            setSelectedProductForDetail((curr) =>
+              curr?.id === updatedProd.id ? updatedProd : curr
+            );
           } else if (parsed.type === 'CATEGORY_DELETED') {
             setCategories((prev) => prev.filter((c) => c.id !== parsed.categoryId));
           }

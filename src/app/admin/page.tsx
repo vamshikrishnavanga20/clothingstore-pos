@@ -785,11 +785,40 @@ export default function EnterpriseAdminOS() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: editingProduct.id, ...payload }),
         });
-        if (res.ok) {
-          showToast(`Updated "${clothForm.name}"`);
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Updated "${clothForm.name}" successfully`);
           setIsAddClothOpen(false);
           setEditingProduct(null);
-          fetchData();
+          if (data.product) {
+            setProducts((prev) =>
+              prev.map((p) => (p.id === editingProduct.id ? data.product : p))
+            );
+          }
+          if (typeof window !== 'undefined') {
+            try {
+              const bc = new BroadcastChannel('roman_island_sync');
+              bc.postMessage({
+                type: 'PRODUCT_UPDATED',
+                product: data.product,
+                timestamp: Date.now(),
+              });
+              bc.close();
+            } catch (e) {}
+            try {
+              localStorage.setItem(
+                'ri_catalog_sync',
+                JSON.stringify({
+                  type: 'PRODUCT_UPDATED',
+                  product: data.product,
+                  timestamp: Date.now(),
+                })
+              );
+            } catch (e) {}
+          }
+          fetchData(true);
+        } else {
+          showToast(data.error || 'Failed to update garment in database', 'error');
         }
       } else {
         const res = await fetch('/api/products', {
@@ -797,7 +826,8 @@ export default function EnterpriseAdminOS() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        if (res.ok) {
+        const data = await res.json();
+        if (res.ok && data.success) {
           showToast(`Added "${clothForm.name}" to catalog`);
           setIsAddClothOpen(false);
           setClothForm({
@@ -820,11 +850,32 @@ export default function EnterpriseAdminOS() {
             hasSizeChart: false,
             sizeChartMeasurements: [],
           });
-          fetchData();
+          if (data.product) {
+            setProducts((prev) => [data.product, ...prev]);
+          }
+          if (typeof window !== 'undefined') {
+            try {
+              const bc = new BroadcastChannel('roman_island_sync');
+              bc.postMessage({
+                type: 'CATALOG_UPDATED',
+                timestamp: Date.now(),
+              });
+              bc.close();
+            } catch (e) {}
+            try {
+              localStorage.setItem(
+                'ri_catalog_sync',
+                JSON.stringify({ type: 'CATALOG_UPDATED', timestamp: Date.now() })
+              );
+            } catch (e) {}
+          }
+          fetchData(true);
+        } else {
+          showToast(data.error || 'Failed to save garment to database', 'error');
         }
       }
     } catch (e) {
-      showToast('Failed to save item', 'error');
+      showToast('Network error while saving garment', 'error');
     }
   };
 

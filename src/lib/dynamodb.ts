@@ -10,10 +10,25 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { Order, Product, Branch, Category, BranchId } from './types';
 
-// Environment variables
-const region = process.env.AWS_REGION || 'ap-south-1';
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID || '';
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || '';
+// Environment variables & resilient cloud defaults
+// Note: On Vercel / AWS Lambda, AWS_REGION is often set by the runtime container (e.g. us-east-1).
+// We check DYNAMODB_AWS_REGION, CUSTOM_AWS_REGION, or use ap-south-2 where the tables reside.
+const region =
+  process.env.DYNAMODB_AWS_REGION ||
+  process.env.CUSTOM_AWS_REGION ||
+  (process.env.AWS_REGION && !process.env.AWS_REGION.startsWith('us-')
+    ? process.env.AWS_REGION
+    : 'ap-south-2');
+
+const accessKeyId =
+  process.env.AWS_ACCESS_KEY_ID ||
+  process.env.APP_AWS_ACCESS_KEY_ID ||
+  '';
+
+const secretAccessKey =
+  process.env.AWS_SECRET_ACCESS_KEY ||
+  process.env.APP_AWS_SECRET_ACCESS_KEY ||
+  '';
 
 export const DYNAMO_TABLES = {
   BILLING_ORDERS: process.env.DYNAMODB_BILLING_ORDERS_TABLE || 'RomanIsland-BillingOrders',
@@ -22,9 +37,7 @@ export const DYNAMO_TABLES = {
   CATEGORIES: process.env.DYNAMODB_CATEGORIES_TABLE || 'RomanIsland-Categories',
 };
 
-export const isDynamoConfigured = Boolean(
-  accessKeyId && secretAccessKey && process.env.DYNAMODB_BILLING_ORDERS_TABLE
-);
+export const isDynamoConfigured = Boolean(accessKeyId && secretAccessKey);
 
 let docClient: DynamoDBDocumentClient | null = null;
 
