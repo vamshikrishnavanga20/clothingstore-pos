@@ -647,14 +647,14 @@ export default function EnterpriseAdminOS() {
 
     setEditingProduct(prod);
     setClothForm({
-      name: prod.name,
-      sku: prod.sku,
-      category: prod.category,
+      name: prod.name || '',
+      sku: prod.sku || '',
+      category: prod.category || 'Checks',
       description: prod.description || '',
-      costPrice: prod.costPrice,
-      sellingPrice: prod.sellingPrice,
+      costPrice: prod.costPrice ?? 600,
+      sellingPrice: prod.sellingPrice ?? 1499,
       tag: prod.tag || '',
-      image: prod.image,
+      image: prod.image || '',
       initialStock: initialQty,
       sizes: pSizes.join(', '),
       targetBranch: defaultBranch,

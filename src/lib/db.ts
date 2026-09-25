@@ -585,11 +585,12 @@ export function saveDatabase(data: StoreDatabase): void {
 // Products
 export function getProducts(category?: string, search?: string): Product[] {
   const db = getDatabase();
-  let result = db.products;
+  let result = (db.products || []).filter((p) => p && p.id && p.name);
 
   if (category && category !== 'All') {
+    const targetCat = category.toLowerCase();
     result = result.filter(
-      (p) => p.category.toLowerCase() === category.toLowerCase()
+      (p) => (p.category || '').toLowerCase() === targetCat
     );
   }
 
@@ -597,9 +598,9 @@ export function getProducts(category?: string, search?: string): Product[] {
     const q = search.toLowerCase();
     result = result.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q)
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.category || '').toLowerCase().includes(q) ||
+        (p.sku || '').toLowerCase().includes(q)
     );
   }
 
@@ -653,10 +654,10 @@ export function deleteProduct(id: string): boolean {
 // Categories
 export function getCategories(): Category[] {
   const db = getDatabase();
-  return db.categories.map((c) => ({
+  return (db.categories || []).map((c) => ({
     ...c,
-    itemCount: db.products.filter(
-      (p) => p.category.toLowerCase() === c.name.toLowerCase()
+    itemCount: (db.products || []).filter(
+      (p) => p && (p.category || '').toLowerCase() === (c.name || '').toLowerCase()
     ).length,
   }));
 }

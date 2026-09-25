@@ -202,12 +202,13 @@ export interface UserSession {
   token?: string;
 }
 
-export function getProductSizes(product: Product): string[] {
-  if (product.sizes && product.sizes.length > 0) {
+export function getProductSizes(product?: Product | null): string[] {
+  if (!product) return ['S', 'M', 'L', 'XL', 'XXL'];
+  if (Array.isArray(product.sizes) && product.sizes.length > 0) {
     return product.sizes;
   }
   const sizeSet = new Set<string>();
-  if (product.inventory) {
+  if (product.inventory && typeof product.inventory === 'object') {
     Object.values(product.inventory).forEach((branchStock) => {
       if (branchStock && typeof branchStock === 'object') {
         Object.keys(branchStock).forEach((sz) => sizeSet.add(sz));
@@ -221,24 +222,28 @@ export function getProductSizes(product: Product): string[] {
 }
 
 export function getProductPriceForSize(
-  product: Product,
+  product?: Product | null,
   size?: string
 ): { sellingPrice: number; costPrice: number } {
+  if (!product) return { sellingPrice: 0, costPrice: 0 };
+  const baseSellingPrice = typeof product.sellingPrice === 'number' ? product.sellingPrice : 0;
+  const baseCostPrice = typeof product.costPrice === 'number' ? product.costPrice : 0;
+
   if (size && product.sizePrices && product.sizePrices[size]) {
     const sp = product.sizePrices[size];
     const sellingPrice =
       typeof sp === 'number'
         ? sp
-        : typeof sp.sellingPrice === 'number'
+        : typeof sp?.sellingPrice === 'number'
         ? sp.sellingPrice
-        : product.sellingPrice;
+        : baseSellingPrice;
     const costPrice =
-      typeof sp === 'object' && typeof sp.costPrice === 'number'
+      typeof sp === 'object' && typeof sp?.costPrice === 'number'
         ? sp.costPrice
-        : product.costPrice;
+        : baseCostPrice;
     return { sellingPrice, costPrice };
   }
-  return { sellingPrice: product.sellingPrice, costPrice: product.costPrice };
+  return { sellingPrice: baseSellingPrice, costPrice: baseCostPrice };
 }
 
 

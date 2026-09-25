@@ -219,7 +219,32 @@ export async function getProductByIdFromDynamo(id: string): Promise<Product | nu
       Key: { id },
     });
     const res = await docClient.send(command);
-    return (res.Item as Product) || null;
+    if (!res.Item) return null;
+    const item = res.Item as any;
+    if (!item.name || !item.id) return null;
+    return {
+      id: String(item.id),
+      name: String(item.name),
+      sku: item.sku || `SKU-${String(item.id).slice(-4)}`,
+      category: item.category || 'General',
+      description: item.description || '',
+      costPrice: typeof item.costPrice === 'number' ? item.costPrice : 0,
+      sellingPrice: typeof item.sellingPrice === 'number' ? item.sellingPrice : 0,
+      tag: item.tag || '',
+      image:
+        item.image ||
+        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop',
+      sizes: Array.isArray(item.sizes) ? item.sizes : undefined,
+      fabric: item.fabric || undefined,
+      care: item.care || undefined,
+      hasSizeChart: Boolean(item.hasSizeChart),
+      sizeChartMeasurements: Array.isArray(item.sizeChartMeasurements) ? item.sizeChartMeasurements : undefined,
+      sizePrices: item.sizePrices || undefined,
+      hasVariablePricing: Boolean(item.hasVariablePricing),
+      inventory: item.inventory && typeof item.inventory === 'object' ? item.inventory : {},
+      createdAt: item.createdAt || new Date().toISOString(),
+      updatedAt: item.updatedAt || new Date().toISOString(),
+    } as Product;
   } catch (error) {
     console.warn('DynamoDB getProductById error:', error);
     return null;
@@ -234,7 +259,37 @@ export async function scanProductsFromDynamo(): Promise<Product[] | null> {
       TableName: DYNAMO_TABLES.PRODUCTS,
     });
     const res = await docClient.send(command);
-    return (res.Items as Product[]) || [];
+    if (!res.Items || !Array.isArray(res.Items)) return [];
+
+    const validProducts: Product[] = res.Items
+      .filter((item: any) => item && item.id && item.name && typeof item.name === 'string')
+      .map((item: any) => {
+        return {
+          id: String(item.id),
+          name: String(item.name),
+          sku: item.sku || `SKU-${String(item.id).slice(-4)}`,
+          category: item.category || 'General',
+          description: item.description || '',
+          costPrice: typeof item.costPrice === 'number' ? item.costPrice : 0,
+          sellingPrice: typeof item.sellingPrice === 'number' ? item.sellingPrice : 0,
+          tag: item.tag || '',
+          image:
+            item.image ||
+            'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop',
+          sizes: Array.isArray(item.sizes) ? item.sizes : undefined,
+          fabric: item.fabric || undefined,
+          care: item.care || undefined,
+          hasSizeChart: Boolean(item.hasSizeChart),
+          sizeChartMeasurements: Array.isArray(item.sizeChartMeasurements) ? item.sizeChartMeasurements : undefined,
+          sizePrices: item.sizePrices || undefined,
+          hasVariablePricing: Boolean(item.hasVariablePricing),
+          inventory: item.inventory && typeof item.inventory === 'object' ? item.inventory : {},
+          createdAt: item.createdAt || new Date().toISOString(),
+          updatedAt: item.updatedAt || new Date().toISOString(),
+        } as Product;
+      });
+
+    return validProducts;
   } catch (error) {
     console.warn('DynamoDB scanProducts error:', error);
     return null;

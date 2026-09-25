@@ -159,6 +159,8 @@ export async function PUT(request: Request) {
         const existing = await getProductByIdFromDynamo(id);
         if (existing) {
           toSave = { ...existing, ...updates, updatedAt: new Date().toISOString() };
+        } else {
+          toSave = { id, ...updates, updatedAt: new Date().toISOString() };
         }
       }
       if (toSave) {

@@ -19,8 +19,8 @@ import {
 import { Product, Category, Branch, getProductSizes, getProductPriceForSize } from '@/lib/types';
 
 
-function getTotalStockForSize(product: Product, size: string): number {
-  if (!product.inventory) return 0;
+function getTotalStockForSize(product?: Product | null, size?: string): number {
+  if (!product || !product.inventory || !size) return 0;
   let total = 0;
   for (const branchId in product.inventory) {
     total += product.inventory[branchId]?.[size] || 0;
@@ -182,12 +182,18 @@ export default function StorefrontHomePage() {
     setDetailSelectedSize(active);
   };
 
-  const filteredProducts = products.filter((p) => {
-    const matchCategory = activeCategory === 'All' || p.category.toLowerCase() === activeCategory.toLowerCase();
+  const filteredProducts = (products || []).filter((p) => {
+    if (!p) return false;
+    const cat = (p.category || '').toLowerCase();
+    const name = (p.name || '').toLowerCase();
+    const sku = (p.sku || '').toLowerCase();
+    const q = (searchQuery || '').trim().toLowerCase();
+    const matchCategory = activeCategory === 'All' || cat === (activeCategory || '').toLowerCase();
     const matchSearch =
-      searchQuery.trim() === '' ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase());
+      q === '' ||
+      name.includes(q) ||
+      cat.includes(q) ||
+      sku.includes(q);
     return matchCategory && matchSearch;
   });
 
@@ -322,10 +328,10 @@ export default function StorefrontHomePage() {
             </span>
           </button>
 
-          {categories.map((cat) => (
+          {(categories || []).map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setActiveCategory(cat.name)}
+              onClick={() => setActiveCategory(cat.name || 'All')}
               className="flex flex-col items-center flex-shrink-0 group focus:outline-none snap-start"
             >
               <div
@@ -337,8 +343,8 @@ export default function StorefrontHomePage() {
               >
                 <div className="w-full h-full rounded-full overflow-hidden border-2 border-white bg-neutral-100">
                   <img
-                    src={cat.image}
-                    alt={cat.name}
+                    src={cat.image || 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=400&auto=format&fit=crop'}
+                    alt={cat.name || 'Category'}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
@@ -348,7 +354,7 @@ export default function StorefrontHomePage() {
                   activeCategory === cat.name ? 'font-bold text-neutral-900' : 'font-medium text-neutral-500'
                 }`}
               >
-                {cat.name}
+                {cat.name || 'Category'}
               </span>
             </button>
           ))}
@@ -387,8 +393,11 @@ export default function StorefrontHomePage() {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {filteredProducts.map((product) => {
+              if (!product) return null;
               const pSizes = getProductSizes(product);
               const activeSize = selectedSizes[product.id] || (pSizes.length > 0 ? pSizes[0] : undefined);
+              const priceInfo = getProductPriceForSize(product, activeSize);
+              const activePrice = typeof priceInfo?.sellingPrice === 'number' ? priceInfo.sellingPrice : (product.sellingPrice || 0);
 
               return (
                 <div
@@ -405,8 +414,8 @@ export default function StorefrontHomePage() {
                     )}
 
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={product.image || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop'}
+                      alt={product.name || 'Product'}
                       className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-in-out"
                     />
 
@@ -420,31 +429,26 @@ export default function StorefrontHomePage() {
 
                   <div className="flex flex-col flex-grow px-1">
                     <span className="text-[10px] text-neutral-400 uppercase tracking-widest font-semibold mb-1">
-                      {product.category}
+                      {product.category || 'General'}
                     </span>
                     <h4 className="text-xs sm:text-sm font-semibold uppercase tracking-wide line-clamp-1 mb-1 text-neutral-900 group-hover:text-black">
-                      {product.name}
+                      {product.name || 'Untitled Garment'}
                     </h4>
 
                     {/* Cost / Price Display */}
-                    {(() => {
-                      const activePrice = getProductPriceForSize(product, activeSize).sellingPrice;
-                      return (
-                        <div className="mt-1 flex items-baseline gap-2 flex-wrap">
-                          <span className="font-extrabold text-base sm:text-lg text-neutral-900">
-                            ₹{activePrice.toLocaleString('en-IN')}
-                          </span>
-                          <span className="text-[11px] text-neutral-400 line-through">
-                            ₹{Math.round(activePrice * 1.4).toLocaleString('en-IN')}
-                          </span>
-                          {product.hasVariablePricing && (
-                            <span className="text-[9px] uppercase tracking-wider font-semibold text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded">
-                              Variable Sizing Price
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })()}
+                    <div className="mt-1 flex items-baseline gap-2 flex-wrap">
+                      <span className="font-extrabold text-base sm:text-lg text-neutral-900">
+                        ₹{(activePrice || 0).toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-[11px] text-neutral-400 line-through">
+                        ₹{Math.round((activePrice || 0) * 1.4).toLocaleString('en-IN')}
+                      </span>
+                      {product.hasVariablePricing && (
+                        <span className="text-[9px] uppercase tracking-wider font-semibold text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded">
+                          Variable Sizing Price
+                        </span>
+                      )}
+                    </div>
 
                     {/* Size Selection Buttons (Larger Size + Grey Shaded when out of stock) */}
                     {pSizes && pSizes.length > 0 && (
@@ -599,8 +603,8 @@ export default function StorefrontHomePage() {
               <div className="relative w-full rounded-2xl overflow-hidden bg-neutral-100 shadow-inner border border-neutral-200/80 group">
                 <div className="w-full aspect-[4/3] sm:aspect-[16/10] max-h-[560px]">
                   <img
-                    src={selectedProductForDetail.image}
-                    alt={selectedProductForDetail.name}
+                    src={selectedProductForDetail.image || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop'}
+                    alt={selectedProductForDetail.name || 'Garment Detail'}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>
@@ -621,7 +625,7 @@ export default function StorefrontHomePage() {
               {/* PRODUCT HEADER & COST */}
               <div className="space-y-2 pb-6 border-b border-neutral-200">
                 <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-wide text-neutral-900">
-                  {selectedProductForDetail.name}
+                  {selectedProductForDetail.name || 'Garment Details'}
                 </h2>
                 {selectedProductForDetail.description?.trim() ? (
                   <p className="text-sm text-neutral-600 leading-relaxed pt-1">
@@ -631,14 +635,15 @@ export default function StorefrontHomePage() {
 
                 {/* Prominent Price & Cost Display */}
                 {(() => {
-                  const detailPrice = getProductPriceForSize(selectedProductForDetail, detailSelectedSize).sellingPrice;
+                  const detailPriceInfo = getProductPriceForSize(selectedProductForDetail, detailSelectedSize);
+                  const detailPrice = typeof detailPriceInfo?.sellingPrice === 'number' ? detailPriceInfo.sellingPrice : (selectedProductForDetail.sellingPrice || 0);
                   return (
                     <div className="pt-3 flex flex-wrap items-baseline gap-3">
                       <span className="text-3xl sm:text-4xl font-black text-neutral-900 tracking-tight">
-                        ₹{detailPrice.toLocaleString('en-IN')}
+                        ₹{(detailPrice || 0).toLocaleString('en-IN')}
                       </span>
                       <span className="text-base sm:text-lg text-neutral-400 line-through">
-                        ₹{Math.round(detailPrice * 1.45).toLocaleString('en-IN')}
+                        ₹{Math.round((detailPrice || 0) * 1.45).toLocaleString('en-IN')}
                       </span>
                       <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-md uppercase tracking-wider">
                         Special In-Store Rate (31% OFF)
@@ -805,9 +810,10 @@ export default function StorefrontHomePage() {
                         <tbody className="divide-y divide-neutral-200 bg-white">
                           {selectedProductForDetail.sizeChartMeasurements.map((row, idx) => {
                             const isRowSelected =
-                              detailSelectedSize &&
-                              (row.size.toLowerCase() === detailSelectedSize.toLowerCase() ||
-                                row.size.toLowerCase().startsWith(detailSelectedSize.toLowerCase()));
+                              Boolean(detailSelectedSize) &&
+                              Boolean(row?.size) &&
+                              ((row.size || '').toLowerCase() === (detailSelectedSize || '').toLowerCase() ||
+                                (row.size || '').toLowerCase().startsWith((detailSelectedSize || '').toLowerCase()));
 
                             return (
                               <tr
